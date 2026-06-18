@@ -1,0 +1,12 @@
+{
+  "name": "ios-vision-barcode-decoder",
+  "version": "1.0.0",
+  "description": "Local iOS Vision barcode decoder for Loyalty Card Wallet.",
+  "main": "src/index.ts",
+  "private": true,
+  "expo-module": {
+    "platforms": [
+      "apple"
+    ]
+  }
+}

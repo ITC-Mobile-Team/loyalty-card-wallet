@@ -1,0 +1,73 @@
+# Permissions And Privacy
+
+The MVP stores loyalty cards locally and does not require an account.
+
+## Permissions
+
+| Permission | Used for | Required at launch | Fallback |
+| --- | --- | --- | --- |
+| Camera | Barcode scanning and optional card artwork capture. | No | Manual entry and photo import. |
+| Photo library | Importing card artwork or barcode images. | No | Manual entry and default card artwork. |
+| Location | Finding nearby stores in the Stores tab. | No | City-based store search. |
+| Local storage | Saved cards, private image payloads, export/import metadata. | Yes | Show storage error and avoid data loss. |
+
+Request camera and photo permissions only when the user starts the related action.
+Request location permission only when the user taps the current-location store search action.
+Store detail map preview must not request location permission or show the user's location. It only renders the selected store coordinate when one is already available.
+Do not request microphone permission for MVP scanner behavior because the app scans barcodes and captures still images only.
+
+## Scanner-First Add Flow
+
+- `/add/scan` requests camera permission only after the user starts scanning.
+- `/add/photo` requests photo-library permission only after the user chooses photo import.
+- Scanner and photo adapters map denied permissions and platform failures to `AppError`.
+- Scan results become editable draft state first. The app does not save a card until the user confirms the card number, barcode format, and store name.
+- Manual entry remains available when camera or photo access is denied.
+
+Scan-from-photo uses on-device barcode decoding on the selected image URI. iOS uses the local Apple Vision decoder for supported one-dimensional and QR barcode formats because Expo Camera image decoding is QR-only on iOS. Android keeps the Expo Camera selected-image decoding path. Platform support is not identical across iOS and Android, so failed or unsupported image decoding must keep the user in the add flow with manual entry available.
+
+## Privacy Rules
+
+- Store card data on device by default.
+- Do not send card numbers, card images, or merchant names to a server in the MVP.
+- Do not require sign-in.
+- Do not use analytics that collect card numbers or user-entered merchant data.
+- Do not include third-party merchant artwork unless it is licensed, user-provided, or generated as a generic placeholder.
+- Do not persist card images as public photo-library assets.
+- Do not upload selected barcode photos for decoding; scan-from-photo decoding stays on device.
+- Do not request location at app launch. Location is used only for user-initiated nearby store discovery.
+- Store discovery may send the current coordinate or city name to the configured OpenStreetMap/Overpass endpoint. The app must keep card numbers and card images out of store-discovery requests.
+- Keep card images behind the app-private data layer. This prevents casual browsing, but it is not a substitute for encrypted storage on compromised devices.
+- Export/import bundles contain sensitive card data and must be user-initiated.
+
+## Permission Denied Behavior
+
+Camera denied:
+- Explain that scanning needs camera access.
+- Keep manual entry visible.
+- Provide a route to system settings only when platform APIs support it.
+
+Photo library denied:
+- Explain that image import needs photo access.
+- Keep existing card image unchanged.
+- Keep manual card creation available.
+
+Location denied:
+- Explain that nearby store search needs location access.
+- Keep city-based store search available.
+- Do not block Cards, scanner, or checkout workflows.
+
+Export/import:
+- Warn that exported bundles include loyalty card numbers and images.
+- Let users choose whether to export one card or all cards.
+- Preview import counts before writing imported cards.
+
+## App Store Copy Inputs
+
+Camera usage should explain barcode scanning and optional card photo capture.
+
+Photo library usage should explain selecting card artwork or importing barcode images.
+
+Location usage should explain finding nearby stores.
+
+Microphone usage should not be present in MVP app configuration.

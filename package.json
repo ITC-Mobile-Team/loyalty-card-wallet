@@ -1,0 +1,48 @@
+{
+  "name": "loyalty-card-wallet",
+  "version": "1.0.0",
+  "main": "expo-router/entry",
+  "private": true,
+  "scripts": {
+    "start": "expo start",
+    "start:web": "expo start --web --localhost",
+    "start:device": "expo start --host lan",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "ios:device": "expo run:ios --device",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "rm -rf .test-build && tsc -p tsconfig.test.json && node --test \".test-build/test/**/*.test.js\""
+  },
+  "dependencies": {
+    "expo": "~56.0.12",
+    "expo-build-properties": "~56.0.19",
+    "expo-camera": "~56.0.8",
+    "expo-clipboard": "~56.0.4",
+    "expo-constants": "~56.0.18",
+    "expo-image-picker": "~56.0.18",
+    "expo-linking": "~56.0.14",
+    "expo-location": "~56.0.18",
+    "expo-maps": "~56.0.7",
+    "expo-router": "~56.2.11",
+    "expo-splash-screen": "~56.0.10",
+    "expo-sqlite": "~56.0.5",
+    "expo-status-bar": "~56.0.4",
+    "lucide-react-native": "^1.17.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.85.3",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "4.25.2",
+    "react-native-svg": "15.15.4",
+    "react-native-web": "^0.21.2"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.2",
+    "@types/react": "~19.2.2",
+    "eslint": "^9.39.4",
+    "eslint-config-expo": "~56.0.4",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "typescript": "~6.0.3"
+  }
+}
