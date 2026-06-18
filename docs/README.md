@@ -18,6 +18,7 @@ docs/
   design/
   imagesForDesign/
   qa/
+  readme/
   research/
   stack/
   user-guide/
@@ -32,6 +33,7 @@ docs/
 - `design/`: reference analysis, design system, screen specs, interaction states, and accessibility rules.
 - `imagesForDesign/`: screenshots, design references, mockups, and visual research assets.
 - `qa/`: manual QA checklists, device testing notes, and release validation.
+- `readme/`: public screenshots and media used by the root README.
 - `research/`: notes from videos, articles, library comparisons, and experiments.
 - `stack/`: current technology stack and library ownership notes.
 - `user-guide/`: user-facing flows and expected behavior.

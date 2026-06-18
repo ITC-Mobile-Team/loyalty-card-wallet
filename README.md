@@ -1,10 +1,64 @@
 # Loyalty Card Wallet
 
-Local-first React Native app for storing loyalty cards, showing scanner-friendly barcodes, and discovering nearby stores.
+[![CI](https://github.com/ITC-Mobile-Team/loyalty-card-wallet/actions/workflows/ci.yml/badge.svg)](https://github.com/ITC-Mobile-Team/loyalty-card-wallet/actions/workflows/ci.yml)
+![Expo](https://img.shields.io/badge/Expo-56-000020?logo=expo)
+![React Native](https://img.shields.io/badge/React%20Native-0.85-61DAFB?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript&logoColor=white)
+
+A local-first React Native wallet for loyalty cards, private card images, scanner-friendly barcodes, card sharing, and nearby store discovery.
 
 The app is built with Expo, Expo Router, TypeScript, SQLite-backed local storage, and clean architecture boundaries documented under `docs/`.
 
-## Prerequisites
+## Preview
+
+| Cards | Stores | Account |
+| --- | --- | --- |
+| ![Cards screen empty state](docs/readme/cards.png) | ![Stores screen with OpenStreetMap results](docs/readme/stores.png) | ![Account screen with backup and restore tools](docs/readme/account.png) |
+
+These screenshots are captured from the Expo Web smoke target. iOS and Android are the product platforms and still need native device QA for platform-specific behavior.
+
+## Features
+
+- Local-first SQLite storage for cards, image metadata, and export metadata.
+- Private card image payloads stored behind the app data layer.
+- Scanner-friendly barcode rendering for saved loyalty cards.
+- JSON import/export for backup and restore.
+- Single-card share links with preview-before-import behavior.
+- Nearby store discovery powered by OpenStreetMap/Overpass.
+- Clean architecture with injected repositories, adapters, and platform services.
+- GitHub Actions CI for install, Expo compatibility, typecheck, lint, and tests.
+
+## Architecture
+
+```mermaid
+flowchart TD
+  App["Expo Router routes"] --> Features["Feature screens and hooks"]
+  Features --> Domain["Domain interfaces and pure models"]
+  Domain --> Data["Data adapters"]
+  Data --> SQLite["SQLite storage"]
+  Data --> Expo["Expo native APIs"]
+  DI["Composition root"] --> Features
+  DI --> Data
+```
+
+The domain layer stays independent from React, Expo, SQLite, navigation, and network implementations. Platform and persistence details live behind data adapters and are wired in the composition root.
+
+## Tech Stack
+
+| Area | Choice |
+| --- | --- |
+| App framework | Expo React Native |
+| Language | TypeScript |
+| Navigation | Expo Router |
+| Local storage | SQLite |
+| Native APIs | Expo modules and local Expo module for iOS Vision barcode decoding |
+| Maps | `expo-maps` with OpenStreetMap/Overpass discovery |
+| Testing | TypeScript test build plus Node test runner |
+| CI | GitHub Actions |
+
+## Quick Start
+
+Prerequisites:
 
 - Node.js 22 LTS or another version accepted by the installed React Native packages.
 - npm.
@@ -14,10 +68,15 @@ The app is built with Expo, Expo Router, TypeScript, SQLite-backed local storage
 
 Avoid Node.js 23 for routine work because current React Native packages print engine warnings for that range.
 
-## Quick Start
+Install dependencies:
 
 ```sh
 npm install
+```
+
+Run the automated baseline:
+
+```sh
 npx expo install --check
 npx expo-doctor
 npm run typecheck
@@ -25,7 +84,9 @@ npm run lint
 npm test
 ```
 
-GitHub Actions runs the same baseline on pushes and pull requests to `main`, so every change gets a shared remote verification signal before merge.
+GitHub Actions runs the same baseline on pushes and pull requests to `main`.
+
+## Run The App
 
 Start the standard Expo dev server:
 
@@ -39,7 +100,7 @@ Run the browser smoke target:
 npm run start:web
 ```
 
-Open `http://localhost:8081` and verify the Cards, Stores, and Account tabs render. Expo Web is used as a developer smoke target; iOS and Android remain the product platforms that need device QA.
+Open `http://localhost:8081` and verify the Cards, Stores, and Account tabs render.
 
 For a physical device on the same local network:
 
@@ -47,7 +108,7 @@ For a physical device on the same local network:
 npm run start:device
 ```
 
-## Native Map Preview
+## Native Notes
 
 Store detail uses `expo-maps` for the embedded map preview and `expo-clipboard` for coordinate copying. `expo-maps` is alpha and is not available in Expo Go, so embedded map QA must use native/development builds:
 
@@ -72,11 +133,13 @@ Do not commit Google Maps API keys. Android builds read `GOOGLE_MAPS_ANDROID_API
 | `npm run lint` | Run ESLint. |
 | `npm test` | Compile tests and run Node's test runner. |
 
-## Documentation Map
+## Documentation
 
 - Project documentation index: [docs/README.md](docs/README.md)
 - Architecture: [docs/architecture/mobile-clean-architecture.md](docs/architecture/mobile-clean-architecture.md)
 - Navigation contract: [docs/architecture/navigation-contract.md](docs/architecture/navigation-contract.md)
+- Import/export contract: [docs/api/import-export.md](docs/api/import-export.md)
+- Data migrations: [docs/data-model/migrations.md](docs/data-model/migrations.md)
 - Design docs: [docs/design/README.md](docs/design/README.md)
 - Mobile QA checklist: [docs/qa/mobile-qa-checklist.md](docs/qa/mobile-qa-checklist.md)
 
