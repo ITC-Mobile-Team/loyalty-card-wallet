@@ -30,6 +30,7 @@
 - Barcode is black on white.
 - Quiet zones are not clipped.
 - Brightness is sufficient.
+- Opening Card Detail and Scan Mode raises screen brightness, then leaving the route restores the previous brightness.
 - Card number is readable below the barcode.
 - Scanning mode works in normal and rotated layouts.
 - iOS Add From Photo decodes a supported one-dimensional barcode fixture, such as an EAN-13 image, in a local development build.

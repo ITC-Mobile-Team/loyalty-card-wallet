@@ -11,6 +11,7 @@
 | Local database | Expo SQLite |
 | File storage | Expo File System |
 | Camera and live scanning | Expo Camera (`expo-camera`) |
+| Checkout barcode brightness | Expo Brightness (`expo-brightness`) |
 | iOS scan from photo | Local Expo module backed by Apple Vision |
 | Image picking | Expo Image Picker (`expo-image-picker`) |
 | Location | Expo Location (`expo-location`) |
@@ -40,6 +41,7 @@ When the Expo app scaffold is created, verify the current Expo SDK support matri
 - `src/data/scanner` owns the Expo Camera, Expo Image Picker, and local Vision decoder adapters used by the scanner flow.
 - `modules/ios-vision-barcode-decoder` owns the Swift Vision implementation for iOS selected-image barcode decoding.
 - `features/barcode` owns validation and rendering.
+- `features/barcode` owns temporary checkout brightness boosting for Card Detail and Scan Mode.
 - `features/images` owns image picker, crop, and file lifecycle.
 - `src/data/storage` owns SQLite setup, database adapters, and migrations.
 - `src/data/cards` owns SQLite-backed card repository implementations.
@@ -60,6 +62,7 @@ When the Expo app scaffold is created, verify the current Expo SDK support matri
 - Scan-from-photo support should be tested on both iOS and Android before making it a core flow. iOS requires a local development build or Xcode run because Expo Go cannot load the local Vision module.
 - Image cropping behavior is platform-dependent.
 - Some barcode libraries may require SVG or image output adjustments in React Native.
+- Expo Brightness should use app-level brightness for checkout barcode screens and restore the saved value on route blur, unmount, or app background. Do not request Android `WRITE_SETTINGS` unless an ADR accepts system-wide brightness changes.
 - Overpass API is a public read-only OSM service with rate limits and reliability constraints. Store discovery must keep small queries, local filtering, visible attribution, and graceful error handling.
 - Expo Location permission prompts must be manually checked on iOS 18.0 and Android 11/API 30.
 - Expo Maps is currently alpha and is not available in Expo Go. Store map preview QA requires a development/native build.

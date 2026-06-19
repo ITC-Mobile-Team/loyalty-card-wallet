@@ -8,6 +8,8 @@ import { CardDetailView } from "@/components/views/CardDetailView";
 import { CardsGridSkeletonView } from "@/components/views/CardsGridSkeletonView";
 import { colors, spacing } from "@/design/tokens";
 import { getCardNumberSuffix } from "@/domain/cards/card-display";
+import { useCopyBarcodeValue } from "@/features/barcode/hooks/useCopyBarcodeValue";
+import { useFocusedBrightnessBoost } from "@/features/barcode/hooks/useFocusedBrightnessBoost";
 import { useRenderedBarcode } from "@/features/barcode/hooks/useRenderedBarcode";
 import { useCardDetails } from "@/features/card-detail/hooks/useCardDetails";
 import { useShareCardLink } from "@/features/sharing/useShareCardLink";
@@ -45,6 +47,7 @@ export function CardDetailScreen({
   refreshSignal = 0
 }: CardDetailScreenProps) {
   const { card, deleteCard, error, images, isDeleting, isLoading, refresh } = useCardDetails(cardId);
+  const { copyBarcodeValue, copyFeedback } = useCopyBarcodeValue();
   const {
     error: shareError,
     isSharing,
@@ -60,6 +63,7 @@ export function CardDetailScreen({
     error: barcodeError,
     isLoading: isBarcodeLoading
   } = useRenderedBarcode(barcodeInput);
+  useFocusedBrightnessBoost(Boolean(card));
 
   useEffect(() => {
     if (refreshSignal > 0) {
@@ -163,9 +167,11 @@ export function CardDetailScreen({
           imageCount={images.imageCount}
           imageUri={images.primaryImageUri}
           isBarcodeLoading={isBarcodeLoading}
+          onCopyCardNumber={() => void copyBarcodeValue(card.cardNumber)}
           onOpenActions={isDeleting || isSharing ? () => undefined : handleOpenActions}
         />
       ) : null}
+      {copyFeedback ? <AppText color={colors.text.secondary}>{copyFeedback.message}</AppText> : null}
       {isSharing ? <AppText color={colors.text.secondary}>Preparing share link...</AppText> : null}
       {shareStatusMessage ? <AppText color={colors.text.secondary}>{shareStatusMessage}</AppText> : null}
       {shareError ? <AppText color={colors.text.secondary}>{shareError.message}</AppText> : null}

@@ -8,6 +8,7 @@ import { Screen } from "@/components/ui/Screen";
 import { BarcodePanelView } from "@/components/views/BarcodePanelView";
 import { colors, spacing } from "@/design/tokens";
 import { formatCardNumberForDisplay } from "@/domain/cards/card-display";
+import { useFocusedBrightnessBoost } from "@/features/barcode/hooks/useFocusedBrightnessBoost";
 import { useRenderedBarcode } from "@/features/barcode/hooks/useRenderedBarcode";
 import { useCardDetails } from "@/features/card-detail/hooks/useCardDetails";
 
@@ -30,6 +31,7 @@ export function CardScanModeScreen({ cardId, onClose }: CardScanModeScreenProps)
   } = useRenderedBarcode(barcodeInput);
   const displayValue = barcode?.displayValue ?? (card ? formatCardNumberForDisplay(card.cardNumber) : "");
   const formatLabel = card?.barcodeFormat.toUpperCase() ?? "BARCODE";
+  useFocusedBrightnessBoost(Boolean(card));
 
   return (
     <Screen contentContainerStyle={styles.content}>

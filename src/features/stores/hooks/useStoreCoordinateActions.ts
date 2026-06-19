@@ -28,7 +28,7 @@ export function useStoreCoordinateActions({ coordinate, storeName }: UseStoreCoo
         coordinate,
         dependencies: {
           copyText: setClipboardStringAsync,
-          openUrl: Linking.openURL
+          openUrl: (url) => Linking.openURL(url)
         },
         platform: Platform.OS,
         storeName

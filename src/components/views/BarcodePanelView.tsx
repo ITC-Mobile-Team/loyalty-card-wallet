@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 
 import { AppText } from "@/components/ui/AppText";
 import { colors, radius, spacing } from "@/design/tokens";
@@ -13,6 +13,7 @@ type BarcodePanelViewProps = {
   error?: AppError | null;
   formatLabel: string;
   isLoading?: boolean;
+  onCopyDisplayValue?: () => void;
   variant?: BarcodePanelVariant;
 };
 
@@ -22,6 +23,7 @@ export function BarcodePanelView({
   error = null,
   formatLabel,
   isLoading = false,
+  onCopyDisplayValue,
   variant = "detail"
 }: BarcodePanelViewProps) {
   const hasBarcode = barcode && !error;
@@ -79,10 +81,24 @@ export function BarcodePanelView({
         </View>
       ) : null}
 
-      <View style={styles.copyBlock}>
+      <View style={styles.numberRow}>
         <AppText color={colors.text.inverse} style={styles.cardNumber} selectable variant="bodyStrong">
           {displayValue}
         </AppText>
+        {onCopyDisplayValue ? (
+          <Pressable
+            accessibilityLabel="Copy card number"
+            accessibilityRole="button"
+            onPress={onCopyDisplayValue}
+            style={({ pressed }) => [styles.copyChip, pressed && styles.copyChipPressed]}
+          >
+            <AppText color={colors.text.inverse} style={styles.copyChipText} variant="caption">
+              Copy
+            </AppText>
+          </Pressable>
+        ) : null}
+      </View>
+      <View style={styles.formatBlock}>
         <AppText color={colors.text.inverse} style={styles.formatLabel} variant="caption">
           {formatLabel}
         </AppText>
@@ -94,9 +110,9 @@ export function BarcodePanelView({
 const styles = StyleSheet.create({
   surface: {
     backgroundColor: colors.surface.barcode,
-    borderRadius: radius.barcode,
-    gap: spacing.md,
-    padding: spacing.lg
+    borderRadius: radius.card + 4,
+    gap: spacing.lg,
+    padding: spacing.xl
   },
   scanSurface: {
     gap: spacing.lg,
@@ -108,7 +124,7 @@ const styles = StyleSheet.create({
   },
   graphic: {
     backgroundColor: colors.surface.barcode,
-    height: 132,
+    height: 150,
     overflow: "hidden",
     position: "relative",
     width: "100%"
@@ -140,13 +156,38 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0
   },
-  copyBlock: {
-    gap: spacing.xxs
+  numberRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: spacing.md,
+    justifyContent: "space-between"
   },
   cardNumber: {
-    textAlign: "center"
+    flex: 1,
+    fontSize: 25,
+    fontWeight: "700",
+    lineHeight: 30
+  },
+  copyChip: {
+    alignItems: "center",
+    backgroundColor: "#ECECEF",
+    borderRadius: 999,
+    minHeight: 36,
+    minWidth: 60,
+    justifyContent: "center",
+    paddingHorizontal: spacing.sm
+  },
+  copyChipPressed: {
+    opacity: 0.72
+  },
+  copyChipText: {
+    fontWeight: "700"
+  },
+  formatBlock: {
+    gap: spacing.xxs
   },
   formatLabel: {
+    fontWeight: "700",
     textAlign: "center"
   },
   centeredText: {

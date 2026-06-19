@@ -5,10 +5,11 @@
 Purpose: show all saved loyalty cards and make the right card reachable in one tap.
 
 Layout:
-- Safe-area top with large title `Cards`.
+- Safe-area top with large title `Your wallet`.
 - Add icon button in the top-right corner.
-- Optional section label `My cards` when at least one card exists.
-- Two-column card grid on phones; one column only on narrow accessibility layouts.
+- The first saved card is presented as a featured wallet card for fast checkout access.
+- Remaining cards use stacked rows with merchant identity, card suffix, and a clear row affordance.
+- Scanner-first add-card entry remains visible below the saved-card stack.
 - Persistent bottom tab bar with `Cards`, `Stores`, and `Account`.
 
 States:
@@ -20,6 +21,7 @@ Rules:
 - Tapping a tile opens card detail.
 - Long merchant names wrap without changing neighboring tile size.
 - User-created generic cards must look as complete as brand-specific cards.
+- The Cards tab should not show both a native tab header title and an in-screen wallet title.
 
 ## Add Card Entry Point
 
@@ -94,16 +96,19 @@ Purpose: make the barcode readable at checkout and expose secondary card managem
 Layout:
 - Push screen from Cards.
 - Back button on the left, overflow action on the right.
-- Card visual header.
-- Large barcode panel.
+- Compact merchant identity row.
+- Compact ready-to-scan status panel.
+- Large white barcode panel.
 - Human-readable card number and copy affordance.
-- Secondary rows: notes and pictures.
+- Brightness status hint while focused.
+- Secondary rows for card info and more actions.
 
 Rules:
 - The barcode panel must be visible without scrolling on common phone sizes.
 - Overflow contains scanning mode, share card, edit card, and delete card, in that order.
 - Share card opens the native text share sheet with a link payload that excludes images.
 - Delete requires confirmation.
+- Card detail temporarily raises screen brightness while focused and restores the previous brightness on exit when supported.
 - During Phase 4, before barcode rendering internals are implemented, the barcode panel may show a high-contrast card-number fallback. Phase 5 owns rendering a scanner-readable barcode.
 
 ## Shared Card Preview

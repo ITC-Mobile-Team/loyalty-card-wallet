@@ -22,6 +22,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="cards"
         options={{
+          headerShown: false,
           title: "Cards",
           tabBarIcon: ({ color }) => <CreditCard color={color} size={iconSize} />
         }}

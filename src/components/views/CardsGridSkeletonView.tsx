@@ -4,11 +4,18 @@ import { colors, radius, spacing } from "@/design/tokens";
 
 export function CardsGridSkeletonView() {
   return (
-    <View style={styles.grid} accessibilityLabel="Loading cards">
-      {Array.from({ length: 4 }).map((_, index) => (
-        <View key={index} style={styles.tile}>
+    <View style={styles.stack} accessibilityLabel="Loading cards">
+      <View style={styles.featuredTile}>
+        <View style={styles.pill} />
+        <View style={styles.featuredLineGroup}>
+          <View style={styles.lineShort} />
+          <View style={styles.titleLine} />
+        </View>
+      </View>
+      {Array.from({ length: 3 }).map((_, index) => (
+        <View key={index} style={styles.rowTile}>
           <View style={styles.badge} />
-          <View style={styles.lineGroup}>
+          <View style={styles.rowLineGroup}>
             <View style={styles.lineLong} />
             <View style={styles.lineShort} />
           </View>
@@ -19,28 +26,44 @@ export function CardsGridSkeletonView() {
 }
 
 const styles = StyleSheet.create({
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.md
+  stack: {
+    gap: spacing.sm
   },
-  tile: {
-    aspectRatio: 1.5,
+  featuredTile: {
     backgroundColor: colors.surface.raised,
-    borderRadius: radius.card,
+    borderRadius: radius.card + 12,
     justifyContent: "space-between",
-    minHeight: 148,
+    minHeight: 228,
     opacity: 0.72,
-    padding: spacing.md,
-    width: "47%"
+    padding: spacing.lg
+  },
+  rowTile: {
+    alignItems: "center",
+    backgroundColor: colors.surface.raised,
+    borderRadius: radius.card + 6,
+    flexDirection: "row",
+    gap: spacing.sm,
+    minHeight: 86,
+    opacity: 0.72,
+    padding: spacing.sm
   },
   badge: {
     backgroundColor: colors.surface.field,
     borderRadius: radius.icon,
-    height: 44,
-    width: 44
+    height: 56,
+    width: 56
   },
-  lineGroup: {
+  pill: {
+    backgroundColor: colors.surface.field,
+    borderRadius: 999,
+    height: 28,
+    width: 150
+  },
+  featuredLineGroup: {
+    gap: spacing.xs
+  },
+  rowLineGroup: {
+    flex: 1,
     gap: spacing.xs
   },
   lineLong: {
@@ -54,5 +77,11 @@ const styles = StyleSheet.create({
     borderRadius: radius.field,
     height: 12,
     width: "46%"
+  },
+  titleLine: {
+    backgroundColor: colors.surface.field,
+    borderRadius: radius.field,
+    height: 28,
+    width: "62%"
   }
 });

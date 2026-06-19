@@ -56,6 +56,13 @@ No add-card route passes full card entities, image data, or blobs through route 
 - Shared card links are modal previews. They do not import until the user explicitly saves the card.
 - Destructive confirmations use native alerts, not custom navigation routes.
 
+## Header And Transition Rules
+
+- Push detail routes should use the native platform back button. Do not replace it with a custom JavaScript back button unless an ADR accepts the loss of native behavior.
+- The root navigation theme must keep `background` and `card` colors aligned with `surface.app` so dark screens do not reveal a light underlay during push transitions.
+- Card Detail and Store Detail push transitions must not show a persistent blurred, highlighted, or custom circular back-button background. A native iOS press highlight is acceptable only while the user is actively pressing the back button.
+- Real-device iOS QA should check the first push from a tab root into Card Detail and Store Detail because native navigation-bar material effects can differ from simulator and web behavior.
+
 ## Tab Rules
 
 MVP tabs are `Cards`, `Stores`, and `Account`.

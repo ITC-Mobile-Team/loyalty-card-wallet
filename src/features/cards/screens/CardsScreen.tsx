@@ -1,4 +1,6 @@
 import { useEffect } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import { Plus } from "lucide-react-native";
 
 import { AppButton } from "@/components/ui/AppButton";
 import { AppText } from "@/components/ui/AppText";
@@ -6,7 +8,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Screen } from "@/components/ui/Screen";
 import { CardsGridSkeletonView } from "@/components/views/CardsGridSkeletonView";
 import { CardsListView } from "@/components/views/CardsListView";
-import { colors, spacing } from "@/design/tokens";
+import { colors, radius, spacing } from "@/design/tokens";
 import { useCards } from "@/features/cards/hooks/useCards";
 
 type CardsScreenProps = {
@@ -25,8 +27,23 @@ export function CardsScreen({ onAddCard, onOpenCard, refreshSignal = 0 }: CardsS
   }, [refresh, refreshSignal]);
 
   return (
-    <Screen contentContainerStyle={{ gap: spacing.xl }}>
-      <AppText variant="titleLarge">Cards</AppText>
+    <Screen contentContainerStyle={styles.content} edges={["top", "bottom", "left", "right"]}>
+      <View style={styles.header}>
+        <View style={styles.titleBlock}>
+          <AppText color={colors.text.muted} variant="caption">
+            Today
+          </AppText>
+          <AppText variant="titleLarge">Your wallet</AppText>
+        </View>
+        <Pressable
+          accessibilityLabel="Add card"
+          accessibilityRole="button"
+          onPress={onAddCard}
+          style={({ pressed }) => [styles.addIconButton, pressed && styles.pressed]}
+        >
+          <Plus color={colors.text.inverse} size={28} strokeWidth={3} />
+        </Pressable>
+      </View>
       {isLoading && cards.length === 0 ? <CardsGridSkeletonView /> : null}
       {error && cards.length === 0 ? (
         <EmptyState
@@ -44,3 +61,31 @@ export function CardsScreen({ onAddCard, onOpenCard, refreshSignal = 0 }: CardsS
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  content: {
+    gap: spacing.xl,
+    paddingTop: spacing.lg
+  },
+  header: {
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+  titleBlock: {
+    gap: spacing.xxs
+  },
+  addIconButton: {
+    alignItems: "center",
+    backgroundColor: "#76F1B3",
+    borderRadius: radius.icon + 4,
+    height: 52,
+    justifyContent: "center",
+    minHeight: 44,
+    minWidth: 44,
+    width: 52
+  },
+  pressed: {
+    opacity: 0.78
+  }
+});

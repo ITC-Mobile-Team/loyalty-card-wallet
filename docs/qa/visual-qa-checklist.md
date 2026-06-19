@@ -28,9 +28,10 @@ Verify at minimum:
 
 ## Cards Screen
 
-- Large title and add button are not clipped.
-- Card grid has stable tile sizes.
+- Large `Your wallet` title and add icon are not clipped.
+- Featured card and stacked card rows have stable sizes.
 - Long merchant names wrap or truncate cleanly.
+- Scanner-first add-card banner is visible and tappable.
 - Empty state shows one clear add action.
 - Bottom tabs show Cards, Stores, and Account and stay above safe area.
 
@@ -59,10 +60,18 @@ Verify at minimum:
 
 ## Card Detail
 
+- Push transition from the Cards tab keeps the native back button stable, with no persistent blurred or custom circular background.
+- Header and screen background remain dark during the push; no light underlay flashes behind the navigation bar.
 - Barcode panel is visible without scrolling at normal text size.
 - Barcode quiet zone is not clipped.
 - Card number is readable and copyable.
+- Ready-to-scan status and brightness hint are readable without competing with the barcode.
 - Overflow menu separates destructive delete action.
+
+## Store Detail
+
+- Push transition from the Stores tab keeps the native back button stable, with no persistent blurred or custom circular background.
+- Header and screen background remain dark during the push; no light underlay flashes behind the navigation bar.
 
 ## Scanning Mode
 
