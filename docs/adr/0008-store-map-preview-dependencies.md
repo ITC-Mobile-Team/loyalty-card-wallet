@@ -1,4 +1,4 @@
-# ADR 0007: Store Map Preview Dependencies
+# ADR 0008: Store Map Preview Dependencies
 
 ## Status
 

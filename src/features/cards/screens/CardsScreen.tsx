@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Screen } from "@/components/ui/Screen";
 import { CardsGridSkeletonView } from "@/components/views/CardsGridSkeletonView";
 import { CardsListView } from "@/components/views/CardsListView";
+import { useStartupSplash } from "@/core/startup/StartupSplash";
 import { colors, radius, spacing } from "@/design/tokens";
 import { useCards } from "@/features/cards/hooks/useCards";
 
@@ -19,12 +20,19 @@ type CardsScreenProps = {
 
 export function CardsScreen({ onAddCard, onOpenCard, refreshSignal = 0 }: CardsScreenProps) {
   const { cards, error, isLoading, refresh } = useCards();
+  const { markReady } = useStartupSplash();
 
   useEffect(() => {
     if (refreshSignal > 0) {
       void refresh({ silent: true });
     }
   }, [refresh, refreshSignal]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      markReady();
+    }
+  }, [isLoading, markReady]);
 
   return (
     <Screen contentContainerStyle={styles.content} edges={["top", "bottom", "left", "right"]}>

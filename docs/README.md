@@ -21,6 +21,7 @@ docs/
   readme/
   research/
   stack/
+  templates/
   user-guide/
 ```
 
@@ -36,6 +37,7 @@ docs/
 - `readme/`: public screenshots and media used by the root README.
 - `research/`: notes from videos, articles, library comparisons, and experiments.
 - `stack/`: current technology stack and library ownership notes.
+- `templates/`: reusable Markdown templates for ADRs, plans, module notes, and feature handoffs.
 - `user-guide/`: user-facing flows and expected behavior.
 
 Local-only directories may exist in a working copy for agent instructions, private implementation plans, developer workflow notes, and personal study material. They are ignored by git.
@@ -50,7 +52,7 @@ Local-only directories may exist in a working copy for agent instructions, priva
 
 ## Git Tracking Policy
 
-General project documentation can be committed, especially ADRs, architecture notes, API contracts, data-model notes, QA references, stack decisions, and research.
+General project documentation can be committed, especially ADRs, architecture notes, API contracts, data-model notes, QA references, stack decisions, templates, and research.
 
 Local agent instructions, private implementation plans, personal study notes, generated app files, credentials, environment files, and store signing artifacts must stay out of git. The repository `.gitignore` enforces this for `AGENTS.md`, `docs/instructions/`, `docs/plans/`, `docs/conventions/`, `docs/developer-experience/`, `docs/study/`, and common secret/build artifacts.
 
@@ -64,7 +66,10 @@ Agents must not use `git add -f` for ignored files unless the user explicitly co
 - Mobile design direction ADR: [adr/0004-mobile-design-direction.md](adr/0004-mobile-design-direction.md)
 - Private images and sharing ADR: [adr/0005-private-card-images-and-sharing.md](adr/0005-private-card-images-and-sharing.md)
 - Scanner and photo import dependency ADR: [adr/0006-scanner-and-photo-import-dependencies.md](adr/0006-scanner-and-photo-import-dependencies.md)
+- Store discovery ADR: [adr/0007-store-discovery-with-openstreetmap.md](adr/0007-store-discovery-with-openstreetmap.md)
+- Store map preview ADR: [adr/0008-store-map-preview-dependencies.md](adr/0008-store-map-preview-dependencies.md)
 - Import/export contract: [api/import-export.md](api/import-export.md)
 - Git tracking policy: [architecture/git-tracking-policy.md](architecture/git-tracking-policy.md)
 - Mobile clean architecture: [architecture/mobile-clean-architecture.md](architecture/mobile-clean-architecture.md)
 - Design docs: [design/README.md](design/README.md)
+- Documentation templates: [templates/README.md](templates/README.md)

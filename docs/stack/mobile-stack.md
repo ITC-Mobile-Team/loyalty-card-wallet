@@ -36,18 +36,18 @@ When the Expo app scaffold is created, verify the current Expo SDK support matri
 
 ## Ownership Notes
 
-- `features/scanner` owns camera scanning behavior.
+- `src/features/add-card`, `src/domain/scanner`, and `src/data/scanner` own camera scanning behavior.
 - `app/` and project setup own Expo Web only as a developer smoke target.
 - `src/data/scanner` owns the Expo Camera, Expo Image Picker, and local Vision decoder adapters used by the scanner flow.
 - `modules/ios-vision-barcode-decoder` owns the Swift Vision implementation for iOS selected-image barcode decoding.
-- `features/barcode` owns validation and rendering.
-- `features/barcode` owns temporary checkout brightness boosting for Card Detail and Scan Mode.
-- `features/images` owns image picker, crop, and file lifecycle.
+- `src/features/barcode`, `src/domain/barcode`, and `src/data/barcode` own validation and rendering.
+- `src/features/barcode` owns temporary checkout brightness boosting for Card Detail and Scan Mode.
+- `src/features/images` and `src/data/images` own image picker, private payload storage, cleanup, and file lifecycle.
 - `src/data/storage` owns SQLite setup, database adapters, and migrations.
 - `src/data/cards` owns SQLite-backed card repository implementations.
 - `src/data/location` owns foreground location access for user-initiated store discovery.
 - `src/data/stores` owns OpenStreetMap/Overpass store discovery.
-- `features/stores` owns the store detail embedded map preview and coordinate actions.
+- `src/features/stores` owns the store detail embedded map preview and coordinate actions.
 - Project configuration owns the native launch screen through the `expo-splash-screen` config plugin and `assets/splash-icon.png`.
 - `src/data/images` owns private card image payload persistence.
 - `src/data/sharing` owns import/export bundle creation, validation, and metadata.

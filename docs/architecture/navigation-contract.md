@@ -60,6 +60,8 @@ No add-card route passes full card entities, image data, or blobs through route 
 
 - Push detail routes should use the native platform back button. Do not replace it with a custom JavaScript back button unless an ADR accepts the loss of native behavior.
 - The root navigation theme must keep `background` and `card` colors aligned with `surface.app` so dark screens do not reveal a light underlay during push transitions.
+- The root stack should prefer the tabs group as the initial route for normal startup. The `/` redirect remains for URL compatibility, but native splash handoff should keep it hidden during cold launch.
+- The native splash must stay visible until the initial Cards route has settled its first data load, so users do not see redirect or loading-only frames between launch and the main wallet.
 - Card Detail and Store Detail push transitions must not show a persistent blurred, highlighted, or custom circular back-button background. A native iOS press highlight is acceptable only while the user is actively pressing the back button.
 - Real-device iOS QA should check the first push from a tab root into Card Detail and Store Detail because native navigation-bar material effects can differ from simulator and web behavior.
 

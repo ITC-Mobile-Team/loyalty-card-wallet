@@ -17,6 +17,8 @@ Verify at minimum:
 - The launch artwork is not stretched, clipped, pixelated, or visibly off-center.
 - No Expo default splash, white flash, or mismatched light background appears before the app shell.
 - First rendered app screen transitions cleanly from the launch background into the dark Cards screen.
+- The user does not see the root redirect route, Cards skeleton, or a light native window background between the launch screen and the settled Cards content.
+- A non-Cards deep link does not remain stuck behind the launch screen.
 - Verify in native preview or production-style iOS and Android builds; Expo Web, Expo Go, and development-client startup are not final proof of native splash behavior.
 
 ## App Icon

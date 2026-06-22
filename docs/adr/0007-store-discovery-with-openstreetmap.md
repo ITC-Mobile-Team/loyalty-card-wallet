@@ -1,4 +1,4 @@
-# ADR 0006: Store Discovery With OpenStreetMap
+# ADR 0007: Store Discovery With OpenStreetMap
 
 ## Status
 

@@ -15,11 +15,12 @@ These paths can be committed when relevant:
 - `docs/qa/`
 - `docs/research/`
 - `docs/stack/`
+- `docs/templates/`
 - `docs/user-guide/`
 - `docs/README.md`
 - `.gitignore`
 
-These documents explain product decisions, architecture, public contracts, design direction, testing expectations, and technology choices.
+These documents explain product decisions, architecture, public contracts, design direction, testing expectations, technology choices, and reusable documentation templates.
 
 ## Local-Only Material
 
