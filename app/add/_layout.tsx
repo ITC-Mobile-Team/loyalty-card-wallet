@@ -15,6 +15,7 @@ export default function AddCardLayout() {
       <Stack.Screen name="manual" options={{ title: "Manual Entry" }} />
       <Stack.Screen name="catalog" options={{ title: "Choose Merchant" }} />
       <Stack.Screen name="photo" options={{ title: "Import Photo" }} />
+      <Stack.Screen name="bulk" options={{ title: "Import Screenshots" }} />
     </Stack>
   );
 }

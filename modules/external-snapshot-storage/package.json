@@ -1,0 +1,13 @@
+{
+  "name": "external-snapshot-storage",
+  "version": "1.0.0",
+  "description": "Native shared storage for Loyalty Card Wallet external snapshots.",
+  "main": "src/index.ts",
+  "private": true,
+  "expo-module": {
+    "platforms": [
+      "apple",
+      "android"
+    ]
+  }
+}

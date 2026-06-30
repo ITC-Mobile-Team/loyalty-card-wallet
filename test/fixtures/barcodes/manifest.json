@@ -1,0 +1,750 @@
+{
+  "generatedBy": "scripts/generate-barcode-fixtures.js",
+  "journey50": [
+    "code128-clear",
+    "code128-rotation",
+    "code128-scale",
+    "code128-low_contrast",
+    "code128-blur",
+    "code128-glare",
+    "code39-clear",
+    "code39-rotation",
+    "code39-scale",
+    "code39-low_contrast",
+    "code39-blur",
+    "code39-glare",
+    "ean13-clear",
+    "ean13-rotation",
+    "ean13-scale",
+    "ean13-low_contrast",
+    "ean13-blur",
+    "ean13-glare",
+    "ean8-clear",
+    "ean8-rotation",
+    "ean8-scale",
+    "ean8-low_contrast",
+    "ean8-blur",
+    "ean8-glare",
+    "upca-clear",
+    "upca-rotation",
+    "upca-scale",
+    "upca-low_contrast",
+    "upca-blur",
+    "upca-glare",
+    "upce-clear",
+    "upce-rotation",
+    "upce-scale",
+    "upce-low_contrast",
+    "upce-blur",
+    "upce-glare",
+    "itf-clear",
+    "itf-rotation",
+    "itf-scale",
+    "itf-low_contrast",
+    "itf-blur",
+    "itf-glare",
+    "qr-clear",
+    "qr-rotation",
+    "qr-scale",
+    "qr-low_contrast",
+    "qr-blur",
+    "qr-glare",
+    "unreadable-blank",
+    "ean13-invalid-checksum"
+  ],
+  "fixtures": [
+    {
+      "expected": [
+        {
+          "format": "code128",
+          "value": "LCW1280001"
+        }
+      ],
+      "file": "code128-clear.png",
+      "id": "code128-clear",
+      "kind": "positive",
+      "transformations": []
+    },
+    {
+      "expected": [
+        {
+          "format": "code128",
+          "value": "LCW1280001"
+        }
+      ],
+      "file": "code128-rotation.png",
+      "id": "code128-rotation",
+      "kind": "positive",
+      "transformations": [
+        "rotation"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "code128",
+          "value": "LCW1280001"
+        }
+      ],
+      "file": "code128-scale.png",
+      "id": "code128-scale",
+      "kind": "positive",
+      "transformations": [
+        "scale"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "code128",
+          "value": "LCW1280001"
+        }
+      ],
+      "file": "code128-low_contrast.png",
+      "id": "code128-low_contrast",
+      "kind": "positive",
+      "transformations": [
+        "low_contrast"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "code128",
+          "value": "LCW1280001"
+        }
+      ],
+      "file": "code128-blur.png",
+      "id": "code128-blur",
+      "kind": "positive",
+      "transformations": [
+        "blur"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "code128",
+          "value": "LCW1280001"
+        }
+      ],
+      "file": "code128-glare.png",
+      "id": "code128-glare",
+      "kind": "positive",
+      "transformations": [
+        "glare"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "code39",
+          "value": "LCW390001"
+        }
+      ],
+      "file": "code39-clear.png",
+      "id": "code39-clear",
+      "kind": "positive",
+      "transformations": []
+    },
+    {
+      "expected": [
+        {
+          "format": "code39",
+          "value": "LCW390001"
+        }
+      ],
+      "file": "code39-rotation.png",
+      "id": "code39-rotation",
+      "kind": "positive",
+      "transformations": [
+        "rotation"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "code39",
+          "value": "LCW390001"
+        }
+      ],
+      "file": "code39-scale.png",
+      "id": "code39-scale",
+      "kind": "positive",
+      "transformations": [
+        "scale"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "code39",
+          "value": "LCW390001"
+        }
+      ],
+      "file": "code39-low_contrast.png",
+      "id": "code39-low_contrast",
+      "kind": "positive",
+      "transformations": [
+        "low_contrast"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "code39",
+          "value": "LCW390001"
+        }
+      ],
+      "file": "code39-blur.png",
+      "id": "code39-blur",
+      "kind": "positive",
+      "transformations": [
+        "blur"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "code39",
+          "value": "LCW390001"
+        }
+      ],
+      "file": "code39-glare.png",
+      "id": "code39-glare",
+      "kind": "positive",
+      "transformations": [
+        "glare"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "ean13",
+          "value": "4006381333931"
+        }
+      ],
+      "file": "ean13-clear.png",
+      "id": "ean13-clear",
+      "kind": "positive",
+      "transformations": []
+    },
+    {
+      "expected": [
+        {
+          "format": "ean13",
+          "value": "4006381333931"
+        }
+      ],
+      "file": "ean13-rotation.png",
+      "id": "ean13-rotation",
+      "kind": "positive",
+      "transformations": [
+        "rotation"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "ean13",
+          "value": "4006381333931"
+        }
+      ],
+      "file": "ean13-scale.png",
+      "id": "ean13-scale",
+      "kind": "positive",
+      "transformations": [
+        "scale"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "ean13",
+          "value": "4006381333931"
+        }
+      ],
+      "file": "ean13-low_contrast.png",
+      "id": "ean13-low_contrast",
+      "kind": "positive",
+      "transformations": [
+        "low_contrast"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "ean13",
+          "value": "4006381333931"
+        }
+      ],
+      "file": "ean13-blur.png",
+      "id": "ean13-blur",
+      "kind": "positive",
+      "transformations": [
+        "blur"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "ean13",
+          "value": "4006381333931"
+        }
+      ],
+      "file": "ean13-glare.png",
+      "id": "ean13-glare",
+      "kind": "positive",
+      "transformations": [
+        "glare"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "ean8",
+          "value": "96385074"
+        }
+      ],
+      "file": "ean8-clear.png",
+      "id": "ean8-clear",
+      "kind": "positive",
+      "transformations": []
+    },
+    {
+      "expected": [
+        {
+          "format": "ean8",
+          "value": "96385074"
+        }
+      ],
+      "file": "ean8-rotation.png",
+      "id": "ean8-rotation",
+      "kind": "positive",
+      "transformations": [
+        "rotation"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "ean8",
+          "value": "96385074"
+        }
+      ],
+      "file": "ean8-scale.png",
+      "id": "ean8-scale",
+      "kind": "positive",
+      "transformations": [
+        "scale"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "ean8",
+          "value": "96385074"
+        }
+      ],
+      "file": "ean8-low_contrast.png",
+      "id": "ean8-low_contrast",
+      "kind": "positive",
+      "transformations": [
+        "low_contrast"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "ean8",
+          "value": "96385074"
+        }
+      ],
+      "file": "ean8-blur.png",
+      "id": "ean8-blur",
+      "kind": "positive",
+      "transformations": [
+        "blur"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "ean8",
+          "value": "96385074"
+        }
+      ],
+      "file": "ean8-glare.png",
+      "id": "ean8-glare",
+      "kind": "positive",
+      "transformations": [
+        "glare"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "upca",
+          "value": "036000291452"
+        }
+      ],
+      "file": "upca-clear.png",
+      "id": "upca-clear",
+      "kind": "positive",
+      "transformations": []
+    },
+    {
+      "expected": [
+        {
+          "format": "upca",
+          "value": "036000291452"
+        }
+      ],
+      "file": "upca-rotation.png",
+      "id": "upca-rotation",
+      "kind": "positive",
+      "transformations": [
+        "rotation"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "upca",
+          "value": "036000291452"
+        }
+      ],
+      "file": "upca-scale.png",
+      "id": "upca-scale",
+      "kind": "positive",
+      "transformations": [
+        "scale"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "upca",
+          "value": "036000291452"
+        }
+      ],
+      "file": "upca-low_contrast.png",
+      "id": "upca-low_contrast",
+      "kind": "positive",
+      "transformations": [
+        "low_contrast"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "upca",
+          "value": "036000291452"
+        }
+      ],
+      "file": "upca-blur.png",
+      "id": "upca-blur",
+      "kind": "positive",
+      "transformations": [
+        "blur"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "upca",
+          "value": "036000291452"
+        }
+      ],
+      "file": "upca-glare.png",
+      "id": "upca-glare",
+      "kind": "positive",
+      "transformations": [
+        "glare"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "upce",
+          "value": "04252614"
+        }
+      ],
+      "file": "upce-clear.png",
+      "id": "upce-clear",
+      "kind": "positive",
+      "transformations": []
+    },
+    {
+      "expected": [
+        {
+          "format": "upce",
+          "value": "04252614"
+        }
+      ],
+      "file": "upce-rotation.png",
+      "id": "upce-rotation",
+      "kind": "positive",
+      "transformations": [
+        "rotation"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "upce",
+          "value": "04252614"
+        }
+      ],
+      "file": "upce-scale.png",
+      "id": "upce-scale",
+      "kind": "positive",
+      "transformations": [
+        "scale"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "upce",
+          "value": "04252614"
+        }
+      ],
+      "file": "upce-low_contrast.png",
+      "id": "upce-low_contrast",
+      "kind": "positive",
+      "transformations": [
+        "low_contrast"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "upce",
+          "value": "04252614"
+        }
+      ],
+      "file": "upce-blur.png",
+      "id": "upce-blur",
+      "kind": "positive",
+      "transformations": [
+        "blur"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "upce",
+          "value": "04252614"
+        }
+      ],
+      "file": "upce-glare.png",
+      "id": "upce-glare",
+      "kind": "positive",
+      "transformations": [
+        "glare"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "itf",
+          "value": "12345678901231"
+        }
+      ],
+      "file": "itf-clear.png",
+      "id": "itf-clear",
+      "kind": "positive",
+      "transformations": []
+    },
+    {
+      "expected": [
+        {
+          "format": "itf",
+          "value": "12345678901231"
+        }
+      ],
+      "file": "itf-rotation.png",
+      "id": "itf-rotation",
+      "kind": "positive",
+      "transformations": [
+        "rotation"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "itf",
+          "value": "12345678901231"
+        }
+      ],
+      "file": "itf-scale.png",
+      "id": "itf-scale",
+      "kind": "positive",
+      "transformations": [
+        "scale"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "itf",
+          "value": "12345678901231"
+        }
+      ],
+      "file": "itf-low_contrast.png",
+      "id": "itf-low_contrast",
+      "kind": "positive",
+      "transformations": [
+        "low_contrast"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "itf",
+          "value": "12345678901231"
+        }
+      ],
+      "file": "itf-blur.png",
+      "id": "itf-blur",
+      "kind": "positive",
+      "transformations": [
+        "blur"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "itf",
+          "value": "12345678901231"
+        }
+      ],
+      "file": "itf-glare.png",
+      "id": "itf-glare",
+      "kind": "positive",
+      "transformations": [
+        "glare"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "qr",
+          "value": "loyalty://synthetic/lcw-qr-1"
+        }
+      ],
+      "file": "qr-clear.png",
+      "id": "qr-clear",
+      "kind": "positive",
+      "transformations": []
+    },
+    {
+      "expected": [
+        {
+          "format": "qr",
+          "value": "loyalty://synthetic/lcw-qr-1"
+        }
+      ],
+      "file": "qr-rotation.png",
+      "id": "qr-rotation",
+      "kind": "positive",
+      "transformations": [
+        "rotation"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "qr",
+          "value": "loyalty://synthetic/lcw-qr-1"
+        }
+      ],
+      "file": "qr-scale.png",
+      "id": "qr-scale",
+      "kind": "positive",
+      "transformations": [
+        "scale"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "qr",
+          "value": "loyalty://synthetic/lcw-qr-1"
+        }
+      ],
+      "file": "qr-low_contrast.png",
+      "id": "qr-low_contrast",
+      "kind": "positive",
+      "transformations": [
+        "low_contrast"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "qr",
+          "value": "loyalty://synthetic/lcw-qr-1"
+        }
+      ],
+      "file": "qr-blur.png",
+      "id": "qr-blur",
+      "kind": "positive",
+      "transformations": [
+        "blur"
+      ]
+    },
+    {
+      "expected": [
+        {
+          "format": "qr",
+          "value": "loyalty://synthetic/lcw-qr-1"
+        }
+      ],
+      "file": "qr-glare.png",
+      "id": "qr-glare",
+      "kind": "positive",
+      "transformations": [
+        "glare"
+      ]
+    },
+    {
+      "expected": [],
+      "file": "ean13-invalid-checksum.png",
+      "id": "ean13-invalid-checksum",
+      "kind": "negative",
+      "transformations": [
+        "invalid_checksum"
+      ]
+    },
+    {
+      "expected": [],
+      "file": "unreadable-blank.png",
+      "id": "unreadable-blank",
+      "kind": "negative",
+      "transformations": [
+        "unreadable"
+      ]
+    },
+    {
+      "expected": [],
+      "file": "unreadable-noise.png",
+      "id": "unreadable-noise",
+      "kind": "negative",
+      "transformations": [
+        "unreadable"
+      ]
+    },
+    {
+      "expected": [],
+      "file": "unreadable-cropped.png",
+      "id": "unreadable-cropped",
+      "kind": "negative",
+      "transformations": [
+        "crop",
+        "unreadable"
+      ]
+    }
+  ]
+}

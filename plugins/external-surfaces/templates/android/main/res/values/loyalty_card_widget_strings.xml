@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="loyalty_card_widget_name">Loyalty Cards</string>
+  <string name="loyalty_card_widget_description">Open selected loyalty cards at checkout.</string>
+  <string name="loyalty_card_widget_label">LOYALTY CARD</string>
+  <string name="loyalty_card_widget_fallback_title">Open Wallet</string>
+  <string name="loyalty_card_widget_fallback_body">Refresh selected cards in the app.</string>
+  <string name="loyalty_card_widget_open_wallet">OPEN WALLET</string>
+  <string name="loyalty_card_widget_open_barcode">OPEN BARCODE</string>
+</resources>

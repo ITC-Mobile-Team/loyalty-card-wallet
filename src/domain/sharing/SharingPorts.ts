@@ -17,6 +17,9 @@ export type ExportedCard = {
   cardNumber: string;
   barcodeFormat: BarcodeFormat;
   backgroundColor?: string;
+  isArchived?: boolean;
+  isFavorite?: boolean;
+  lastUsedAt?: string;
   notes?: string;
   images?: ExportedImage[];
 };

@@ -8,7 +8,9 @@ export default function AddScanRoute() {
   return (
     <AddScanScreen
       onEnterManually={() => router.push("/add/manual")}
+      onImportBulk={() => router.push("/add/bulk" as never)}
       onImportPhoto={() => router.push("/add/photo")}
+      onOpenCatalog={() => router.push("/add/catalog")}
       onSaved={(cardId) => router.replace(`/card/${cardId}`)}
     />
   );

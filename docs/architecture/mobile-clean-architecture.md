@@ -30,11 +30,16 @@ src/
     stores/
     account/
     sharing/
+    backup/
+    security/
+    diagnostics/
+    external-surfaces/
   data/
     cards/
     images/
     stores/
     sharing/
+    external-surfaces/
   features/
     cards/
     scanner/
@@ -157,6 +162,12 @@ type AppDependencies = {
   networkManager: NetworkManager;
   errorReporter: ErrorReporter;
   textShareService: TextShareService;
+  backupService: BackupService;
+  localAuthService: LocalAuthService;
+  localSecuritySettingsStore: LocalSecuritySettingsStore;
+  localDiagnosticsService: LocalDiagnosticsService;
+  externalSnapshotRepository: ExternalSnapshotRepository;
+  merchantLinkRepository: MerchantLinkRepository;
 };
 ```
 
@@ -178,6 +189,28 @@ Rules:
 - feature code retrieves dependencies through hooks such as `useDependencies()`,
 - do not create repositories directly inside screens.
 - platform interaction APIs such as haptics/vibration and native share sheets stay behind injected adapters.
+- app-group/app-private widget storage stays behind the injected external snapshot repository; extensions never receive the SQLite provider.
+
+## External Platform Surfaces
+
+Phone widgets use a separate clean-architecture boundary:
+
+```text
+Card feature action
+  -> ExternalSnapshotRepository port
+  -> deterministic snapshot codec
+  -> native shared-storage adapter
+  -> WidgetKit/AppWidget reader
+  -> scan-mode deep link or Cards fallback
+```
+
+Rules:
+
+- snapshot projection and validation stay pure and platform independent;
+- native modules own atomic shared-container writes and widget reload requests;
+- generated extensions/providers read only the external snapshot file;
+- no extension imports React, Expo Router, SQLite, BackupService, or private image storage;
+- future watch work must transfer the same bounded contract through an explicit watch transport rather than sharing phone storage.
 
 ## Navigation
 
@@ -204,6 +237,27 @@ Required pieces:
 
 No feature should call `fetch` directly. Future API work should use the network layer.
 
+Nearby-card matching follows the same boundary:
+
+```text
+Near Me action
+  -> foreground LocationProvider
+  -> StoreRepository origin request
+  -> pure deterministic merchant scoring
+  -> explicit user confirmation
+  -> MerchantLinkRepository
+```
+
+Rules:
+
+- location and Overpass calls occur only after `Near Me`;
+- keystroke/category filtering is local;
+- domain scoring does not import Expo Location, SQLite, React, routes, or network adapters;
+- OSM references are evidence, not user-owned identity;
+- stale-source state requires a direct batched OSM source-ID resolution; bounded nearby-result absence is insufficient;
+- matching never writes without an explicit confirmation or repair action;
+- nearby failures do not affect Cards, scanner, checkout, sharing, backup, or external surfaces.
+
 ## Error Handling
 
 Use one app-level error model:
@@ -216,6 +270,8 @@ type AppError =
   | { kind: "validation"; field?: string; message: string }
   | { kind: "unknown"; message: string };
 ```
+
+Phase 2 extends this union with stable typed backup and authentication reasons. UI recovery branches on `kind` and `reason`, never on message text.
 
 Rules:
 - UI must not display raw SQLite, Expo, or network errors,

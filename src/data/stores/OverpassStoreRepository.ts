@@ -1,5 +1,12 @@
 import { networkErrorToAppError, type HttpClient, type NetworkError } from "../../core/network/HttpClient";
-import type { StoreRepository, StoreSearchQuery, StoreSearchResult, StoreSummary } from "../../domain/stores/StoreRepository";
+import type {
+  StoreRepository,
+  StoreSearchQuery,
+  StoreSearchResult,
+  StoreSourceIdentity,
+  StoreSourceResolution,
+  StoreSummary
+} from "../../domain/stores/StoreRepository";
 
 const endpoints = [
   "https://overpass-api.de/api/interpreter"
@@ -25,6 +32,7 @@ type OverpassResponse = {
 
 export class OverpassStoreRepository implements StoreRepository {
   private readonly cache = new Map<string, StoreSummary[]>();
+  private readonly detailCache = new Map<string, StoreSummary>();
 
   constructor(
     private readonly httpClient: HttpClient,
@@ -32,15 +40,46 @@ export class OverpassStoreRepository implements StoreRepository {
   ) {}
 
   async getCachedById(id: string): Promise<StoreSummary | null> {
-    for (const stores of this.cache.values()) {
-      const store = stores.find((candidate) => candidate.id === id);
+    return this.detailCache.get(id) ?? null;
+  }
 
-      if (store) {
-        return store;
-      }
+  async resolveSourceReferences(
+    references: readonly StoreSourceIdentity[]
+  ): Promise<StoreSourceResolution[]> {
+    if (references.length === 0) {
+      return [];
     }
 
-    return null;
+    try {
+      const uniqueReferences = uniqueSourceReferences(references);
+      const validReferences = uniqueReferences.filter((reference) => /^\d+$/.test(reference.id));
+      const foundStores = new Map<string, StoreSummary>();
+
+      for (let offset = 0; offset < validReferences.length; offset += 100) {
+        const chunk = validReferences.slice(offset, offset + 100);
+        const response = await this.requestSourceReferences(chunk);
+        const stores = mapElements(response.body.elements ?? []);
+
+        stores.forEach((store) => {
+          this.detailCache.set(store.id, store);
+          foundStores.set(store.id, store);
+        });
+      }
+
+      return uniqueReferences.map((reference) => {
+        const store = foundStores.get(`${reference.type}/${reference.id}`);
+
+        return store
+          ? { reference, status: "found", store }
+          : { reference, status: "missing" };
+      });
+    } catch (error) {
+      if (isNetworkError(error)) {
+        throw networkErrorToAppError(error);
+      }
+
+      throw error;
+    }
   }
 
   async search(query: StoreSearchQuery): Promise<StoreSearchResult> {
@@ -63,8 +102,8 @@ export class OverpassStoreRepository implements StoreRepository {
   }
 
   private async loadStores(query: StoreSearchQuery) {
-    const key = getOriginCacheKey(query);
-    const cachedStores = this.cache.get(key);
+    const key = query.origin.kind === "city" ? getCityCacheKey(query.origin.city) : null;
+    const cachedStores = key ? this.cache.get(key) : undefined;
 
     if (cachedStores) {
       return cachedStores;
@@ -73,7 +112,10 @@ export class OverpassStoreRepository implements StoreRepository {
     const response = await this.requestStores(query);
 
     const stores = mapElements(response.body.elements ?? []);
-    this.cache.set(key, stores);
+    stores.forEach((store) => this.detailCache.set(store.id, store));
+    if (key) {
+      this.cache.set(key, stores);
+    }
 
     return stores;
   }
@@ -103,6 +145,33 @@ export class OverpassStoreRepository implements StoreRepository {
     }
 
     throw lastRetryableError ?? new Error("Store search failed.");
+  }
+
+  private async requestSourceReferences(references: readonly StoreSourceIdentity[]) {
+    let lastRetryableError: NetworkError | null = null;
+
+    for (const endpointUrl of this.endpointUrls) {
+      try {
+        return await this.httpClient.request<OverpassResponse>({
+          body: `data=${encodeURIComponent(buildSourceReferenceQuery(references))}`,
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "User-Agent": "loyalty-card-wallet/1.0"
+          },
+          method: "POST",
+          timeoutMs: 30000,
+          url: endpointUrl
+        });
+      } catch (error) {
+        if (!isNetworkError(error) || !error.retryable) {
+          throw error;
+        }
+
+        lastRetryableError = error;
+      }
+    }
+
+    throw lastRetryableError ?? new Error("Store source verification failed.");
   }
 }
 
@@ -140,17 +209,25 @@ map_to_area->.searchArea;
 out center tags ${maxResults};`;
 }
 
-function getOriginCacheKey(query: StoreSearchQuery) {
-  if (query.origin.kind === "city") {
-    return `city:${query.origin.city.trim().toLocaleLowerCase()}`;
-  }
+function getCityCacheKey(city: string) {
+  return `city:${city.trim().toLocaleLowerCase()}`;
+}
 
-  return [
-    "nearby",
-    query.origin.latitude.toFixed(3),
-    query.origin.longitude.toFixed(3),
-    query.origin.radiusMeters
-  ].join(":");
+function buildSourceReferenceQuery(references: readonly StoreSourceIdentity[]) {
+  const selectors = references.map((reference) => `  ${reference.type}(${reference.id});`).join("\n");
+
+  return `[out:json][timeout:25];
+(
+${selectors}
+);
+out center tags;`;
+}
+
+function uniqueSourceReferences(references: readonly StoreSourceIdentity[]): StoreSourceIdentity[] {
+  const unique = new Map<string, StoreSourceIdentity>();
+
+  references.forEach((reference) => unique.set(`${reference.type}/${reference.id}`, reference));
+  return [...unique.values()];
 }
 
 function mapElements(elements: OverpassElement[]): StoreSummary[] {

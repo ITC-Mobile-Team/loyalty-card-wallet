@@ -1,0 +1,11 @@
+appId: com.anonymous.loyalty-card-wallet
+name: iOS widget fallback deep link opens Cards
+tags:
+  - ios
+  - phase3
+---
+- launchApp:
+    clearState: true
+- openLink: "loyaltycardwallet://"
+- assertVisible: "Cards"
+- assertVisible: "Add card"

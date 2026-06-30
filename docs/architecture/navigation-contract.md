@@ -18,11 +18,22 @@ Planned route groups:
 | `/add/scan` | Modal or full-screen modal | Scan a barcode for a new card. |
 | `/add/manual` | Modal | Enter card data manually. |
 | `/add/photo` | Modal | Import card data from an image when implemented. |
+| `/add/bulk` | Modal | Select multiple screenshots, review normalized drafts, and selectively save valid cards. |
 | `/card/[id]` | Push | Card detail. |
 | `/card/[id]/edit` | Modal | Edit card metadata. |
 | `/card/[id]/scan-mode` | Full-screen modal | Checkout scanning mode. |
 | `/store/[id]` | Push | OpenStreetMap-derived store detail from the Stores tab. |
 | `/share/card` | Modal | Preview one shared card from a deep link before importing it. |
+
+Encrypted backup and restore remain grouped actions inside `/(tabs)/account`; they do not add blob-carrying routes.
+
+External phone widgets use:
+
+```text
+loyaltycardwallet:///card/<source-card-id>/scan-mode
+```
+
+Only a validated active snapshot may create the card-specific link. Missing, stale, revoked, unsupported-future-version, corrupt, or empty widget state uses `loyaltycardwallet://`, which resolves through the existing root redirect to Cards.
 
 ## Parameter Rules
 
@@ -47,6 +58,8 @@ Flow:
 
 No add-card route passes full card entities, image data, or blobs through route params.
 
+Bulk screenshot import uses `/add/bulk`. The route persists only a session ID and normalized drafts in SQLite. Source images remain owned by the platform picker and are not passed through route params or retained by the app.
+
 ## Modal Rules
 
 - Add-card and edit flows are modal.
@@ -54,6 +67,10 @@ No add-card route passes full card entities, image data, or blobs through route 
 - Card detail is a push navigation from the Cards tab.
 - Scanning mode is a full-screen modal because it temporarily changes checkout-focused display behavior.
 - Shared card links are modal previews. They do not import until the user explicitly saves the card.
+- The root AccessGate overlays all routes when optional app lock is enabled and authentication is required.
+- Cold-start or warm deep links may resolve navigation state while locked, but protected route content must remain covered until authentication succeeds.
+- Authentication cancellation or lockout stays on the gate without discarding the pending route.
+- Widget checkout links follow the same AccessGate policy as all other card routes. A locked launch may resolve the route internally, but scan-mode content remains covered until authentication succeeds.
 - Destructive confirmations use native alerts, not custom navigation routes.
 
 ## Header And Transition Rules
@@ -71,6 +88,10 @@ MVP tabs are `Cards`, `Stores`, and `Account`.
 
 `Account` does not require sign-in in the MVP. It owns local settings, privacy notes, and export/import actions.
 
+`Account` composes user-facing Backup and Security sections. Diagnostics and maintenance tools stay internal/service-oriented unless a later explicit support or developer surface exposes them. Backup/security failures remain local to Account and must not remove Cards, scanner, or checkout routes.
+
 `Stores` may use OpenStreetMap data through Overpass API for user-initiated discovery. It must not be treated as a discounts API, and Cards, scanner, and checkout workflows must not depend on Stores data.
+
+`Near Me` stays on the existing Stores tab and does not add a route. After the explicit action, the Stores screen may show clearly labeled card suggestions and confirmed merchant-link controls. Confirmation, correction, dismissal, disable, re-enable, removal, and stale-source repair remain in the existing Stores surface. Only card IDs are used when a confirmed suggestion opens Card Detail.
 
 Store detail routes are cache-backed in the MVP. Opening `/store/[id]` before the Stores list has loaded the matching OpenStreetMap object should show a not-found/recovery state instead of making Cards or checkout flows depend on store discovery.

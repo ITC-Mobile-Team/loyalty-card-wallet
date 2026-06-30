@@ -4,33 +4,18 @@ import { AppButton } from "@/components/ui/AppButton";
 import { AppText } from "@/components/ui/AppText";
 import { ListRow } from "@/components/ui/ListRow";
 import { colors, radius, spacing, typography } from "@/design/tokens";
-import type {
-  DuplicateImportStrategy,
-  ImportBundlePreview
-} from "@/domain/sharing/SharingPorts";
+import type { DuplicateImportStrategy } from "@/domain/sharing/SharingPorts";
+import type { useBackupRestoreController } from "@/features/account/hooks/useBackupRestoreController";
+import type { useLocalSecurityController } from "@/features/account/hooks/useLocalSecurityController";
 
 type AccountLocalSummaryViewProps = {
   appName: string;
   appVersion: string;
   cardCount: number;
-  duplicateStrategy: DuplicateImportStrategy;
-  errorMessage?: string;
-  exportBundleText: string;
-  importBundleText: string;
-  importPreview: ImportBundlePreview | null;
-  isBusy: boolean;
-  lastExportDetail: string;
-  maintenanceDetail: string;
-  onChangeDuplicateStrategy: (strategy: DuplicateImportStrategy) => void;
-  onChangeImportBundleText: (text: string) => void;
-  onClearImportBundle: () => void;
-  onCleanUnusedImages: () => void;
-  onExportAll: () => void;
-  onImportBundle: () => void;
-  onPreviewImport: () => void;
-  onRefreshSummary: () => void;
-  onShareExportBundle: () => void;
-  statusMessage?: string;
+  backup: ReturnType<typeof useBackupRestoreController>;
+  security: ReturnType<typeof useLocalSecurityController>;
+  onConfirmExport: () => void;
+  onConfirmRestore: () => void;
 };
 
 const duplicateStrategies: { label: string; value: DuplicateImportStrategy }[] = [
@@ -39,44 +24,57 @@ const duplicateStrategies: { label: string; value: DuplicateImportStrategy }[] =
   { label: "Keep Both", value: "keepBoth" }
 ];
 
+function DuplicateControl({
+  disabled,
+  value,
+  onChange
+}: {
+  disabled: boolean;
+  value: DuplicateImportStrategy;
+  onChange: (value: DuplicateImportStrategy) => void;
+}) {
+  return (
+    <View style={styles.segmentedControl}>
+      {duplicateStrategies.map((strategy) => {
+        const selected = value === strategy.value;
+        return (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityState={{ selected }}
+            disabled={disabled}
+            key={strategy.value}
+            onPress={() => onChange(strategy.value)}
+            style={[styles.segment, selected && styles.segmentSelected]}
+          >
+            <AppText color={selected ? colors.text.inverse : colors.text.primary} variant="caption">
+              {strategy.label}
+            </AppText>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
 export function AccountLocalSummaryView({
   appName,
   appVersion,
   cardCount,
-  duplicateStrategy,
-  errorMessage,
-  exportBundleText,
-  importBundleText,
-  importPreview,
-  isBusy,
-  lastExportDetail,
-  maintenanceDetail,
-  onChangeDuplicateStrategy,
-  onChangeImportBundleText,
-  onClearImportBundle,
-  onCleanUnusedImages,
-  onExportAll,
-  onImportBundle,
-  onPreviewImport,
-  onRefreshSummary,
-  onShareExportBundle,
-  statusMessage
+  backup,
+  security,
+  onConfirmExport,
+  onConfirmRestore
 }: AccountLocalSummaryViewProps) {
-  const hasImportText = importBundleText.trim().length > 0;
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <AppText variant="titleLarge">Account</AppText>
-        <AppText color={colors.text.secondary}>
-          Local account tools for backup, restore, privacy, and maintenance.
-        </AppText>
+        <AppText color={colors.text.secondary}>Local recovery and security.</AppText>
       </View>
 
       <View style={styles.group}>
-        <ListRow detail="No sign-in required for MVP" title="Local-only wallet" />
+        <ListRow detail="No sign-in required" title="Local-only wallet" />
         <ListRow detail={`${cardCount} saved card${cardCount === 1 ? "" : "s"}`} title="Cards on device" />
-        <ListRow detail={lastExportDetail} title="Last export" />
         <ListRow detail={`${appName} ${appVersion}`} title="App version" />
       </View>
 
@@ -84,166 +82,121 @@ export function AccountLocalSummaryView({
         <View style={styles.sectionHeader}>
           <AppText variant="titleModal">Backup</AppText>
           <AppText color={colors.text.secondary}>
-            Exported bundles include loyalty card numbers and private card images.
+            Encrypted backups contain all card numbers and private images. Forgotten passphrases cannot be recovered.
           </AppText>
         </View>
-        <AppButton disabled={isBusy} label={isBusy ? "Working..." : "Export All Cards"} onPress={onExportAll} />
-        {exportBundleText ? (
-          <View style={styles.fieldGroup}>
-            <AppText variant="bodyStrong">Generated bundle</AppText>
-            <TextInput
-              accessibilityLabel="Generated export bundle"
-              editable={false}
-              multiline
-              scrollEnabled
-              style={[styles.input, styles.bundleOutput]}
-              value={exportBundleText}
-            />
-            <AppButton
-              accessibilityLabel="Share export bundle"
-              disabled={isBusy}
-              label="Share Bundle"
-              onPress={onShareExportBundle}
-              variant="secondary"
-            />
-          </View>
-        ) : null}
-      </View>
-
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <AppText variant="titleModal">Restore</AppText>
-          <AppText color={colors.text.secondary}>
-            Paste a Loyalty Card Wallet JSON bundle to preview it before importing.
-          </AppText>
-        </View>
-
-        <View style={styles.fieldGroup}>
-          <AppText variant="bodyStrong">Import bundle</AppText>
-          <TextInput
-            accessibilityLabel="Import bundle JSON"
-            autoCapitalize="none"
-            autoCorrect={false}
-            editable={!isBusy}
-            multiline
-            onChangeText={onChangeImportBundleText}
-            placeholder="{ ... }"
-            placeholderTextColor={colors.text.muted}
-            style={[styles.input, styles.importInput]}
-            textAlignVertical="top"
-            value={importBundleText}
+        <TextInput
+          accessibilityLabel="Backup passphrase"
+          autoCapitalize="none"
+          autoCorrect={false}
+          editable={!backup.busy}
+          onChangeText={backup.setPassphrase}
+          placeholder="Backup passphrase"
+          placeholderTextColor={colors.text.muted}
+          secureTextEntry
+          style={styles.input}
+          value={backup.passphrase}
+        />
+        <TextInput
+          accessibilityLabel="Confirm backup passphrase"
+          autoCapitalize="none"
+          autoCorrect={false}
+          editable={!backup.busy}
+          onChangeText={backup.setConfirmation}
+          placeholder="Confirm passphrase for export"
+          placeholderTextColor={colors.text.muted}
+          secureTextEntry
+          style={styles.input}
+          value={backup.confirmation}
+        />
+        <View style={styles.buttonRow}>
+          <AppButton
+            disabled={backup.busy}
+            label={backup.busy ? "Working..." : "Create Encrypted Backup"}
+            onPress={onConfirmExport}
+          />
+          <AppButton
+            disabled={backup.busy || backup.passphrase.length < 8}
+            label="Choose Backup To Restore"
+            onPress={() => void backup.previewRestore()}
+            variant="secondary"
           />
         </View>
 
-        <View style={styles.fieldGroup}>
-          <AppText variant="bodyStrong">Duplicate imports</AppText>
-          <View style={styles.segmentedControl}>
-            {duplicateStrategies.map((strategy) => {
-              const selected = duplicateStrategy === strategy.value;
-
-              return (
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={`${strategy.label} duplicate imports`}
-                  accessibilityState={{ selected }}
-                  disabled={isBusy}
-                  key={strategy.value}
-                  onPress={() => onChangeDuplicateStrategy(strategy.value)}
-                  style={[styles.segment, selected && styles.segmentSelected]}
-                >
-                  <AppText
-                    color={selected ? colors.text.inverse : colors.text.primary}
-                    style={styles.segmentLabel}
-                    variant="caption"
-                  >
-                    {strategy.label}
-                  </AppText>
-                </Pressable>
-              );
-            })}
-          </View>
-        </View>
-
-        {importPreview ? (
+        {backup.candidate ? (
           <View style={styles.previewBox}>
-            <AppText variant="bodyStrong">Preview</AppText>
+            <AppText variant="bodyStrong">Restore preview</AppText>
             <AppText color={colors.text.secondary}>
-              {importPreview.cardCount} cards, {importPreview.imageCount} images,{" "}
-              {importPreview.duplicateCardCount} duplicates.
+              {backup.candidate.preview.cardCount} cards, {backup.candidate.preview.imageCount} images, payload v
+              {backup.candidate.preview.sourcePayloadVersion} → v{backup.candidate.preview.currentPayloadVersion}.
             </AppText>
+            <DuplicateControl
+              disabled={backup.busy}
+              onChange={backup.setDuplicateStrategy}
+              value={backup.duplicateStrategy}
+            />
+            <AppButton disabled={backup.busy} label="Restore Previewed Cards" onPress={onConfirmRestore} />
           </View>
         ) : null}
 
-        <View style={styles.buttonRow}>
-          <AppButton
-            disabled={isBusy || !hasImportText}
-            label="Preview Import"
-            onPress={onPreviewImport}
-            variant="secondary"
-          />
-          <AppButton disabled={isBusy || !hasImportText} label="Import Cards" onPress={onImportBundle} />
-          {hasImportText ? (
-            <AppButton disabled={isBusy} label="Clear Import" onPress={onClearImportBundle} variant="secondary" />
-          ) : null}
-        </View>
+        {backup.restoreResult ? (
+          <View style={styles.resultList}>
+            {backup.restoreResult.cards.map((card) => (
+              <AppText color={colors.text.secondary} key={`${card.sourceIndex}-${card.storeName}`} variant="caption">
+                {card.sourceIndex + 1}. {card.storeName}: {card.status}
+                {card.reason ? ` (${card.reason})` : ""}
+              </AppText>
+            ))}
+          </View>
+        ) : null}
+        {backup.status ? <AppText color={colors.text.secondary}>{backup.status}</AppText> : null}
+        {backup.error ? <AppText color={colors.action.danger}>{backup.error}</AppText> : null}
       </View>
 
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <AppText variant="titleModal">Maintenance</AppText>
+          <AppText variant="titleModal">Security</AppText>
           <AppText color={colors.text.secondary}>
-            Local actions only. These do not send card data outside the app.
+            Optional app lock protects on-screen access. It does not encrypt SQLite or private image payloads at rest.
           </AppText>
         </View>
-        <View style={styles.buttonRow}>
-          <AppButton disabled={isBusy} label="Refresh Summary" onPress={onRefreshSummary} variant="secondary" />
-          <AppButton
-            disabled={isBusy}
-            label="Clean Unused Images"
-            onPress={onCleanUnusedImages}
-            variant="secondary"
+        <View style={styles.group}>
+          <ListRow
+            detail={
+              security.available && security.enrolled
+                ? security.enabled
+                  ? "Enabled · locks after 1 minute in background"
+                  : "Available · disabled"
+                : "Biometric or device credential unavailable"
+            }
+            title="Local app lock"
           />
         </View>
-        <AppText color={colors.text.secondary} variant="caption">
-          {maintenanceDetail}
-        </AppText>
+        <View style={styles.buttonRow}>
+          <AppButton
+            disabled={security.busy}
+            label={security.enabled ? "Disable App Lock" : "Enable App Lock"}
+            onPress={() => void security.toggle()}
+            variant="secondary"
+          />
+          {security.enabled ? <AppButton label="Lock Now" onPress={security.lock} variant="secondary" /> : null}
+        </View>
+        {security.message ? <AppText color={colors.text.secondary}>{security.message}</AppText> : null}
       </View>
-
-      {statusMessage ? (
-        <AppText accessibilityLiveRegion="polite" color={colors.text.secondary}>
-          {statusMessage}
-        </AppText>
-      ) : null}
-      {errorMessage ? (
-        <AppText accessibilityLiveRegion="assertive" color={colors.action.danger}>
-          {errorMessage}
-        </AppText>
-      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    gap: spacing.xl
-  },
-  header: {
-    gap: spacing.xs
-  },
+  container: { gap: spacing.xl },
+  header: { gap: spacing.xs },
   group: {
     backgroundColor: colors.surface.raised,
     borderRadius: radius.field,
     paddingHorizontal: spacing.md
   },
-  section: {
-    gap: spacing.md
-  },
-  sectionHeader: {
-    gap: spacing.xs
-  },
-  fieldGroup: {
-    gap: spacing.xs
-  },
+  section: { gap: spacing.md },
+  sectionHeader: { gap: spacing.xs },
   input: {
     ...typography.bodyPrimary,
     backgroundColor: colors.surface.field,
@@ -255,44 +208,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm
   },
-  importInput: {
-    minHeight: 144
+  previewBox: {
+    backgroundColor: colors.surface.raised,
+    borderRadius: radius.field,
+    gap: spacing.sm,
+    padding: spacing.md
   },
-  bundleOutput: {
-    minHeight: 160
+  resultList: {
+    backgroundColor: colors.surface.raised,
+    borderRadius: radius.field,
+    gap: spacing.xs,
+    padding: spacing.md
   },
-  segmentedControl: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.xs
-  },
+  buttonRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+  segmentedControl: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs },
   segment: {
     alignItems: "center",
     backgroundColor: colors.surface.field,
     borderColor: colors.border.separator,
     borderRadius: radius.field,
     borderWidth: 1,
+    justifyContent: "center",
     minHeight: 40,
     minWidth: 92,
-    justifyContent: "center",
     paddingHorizontal: spacing.sm
   },
   segmentSelected: {
     backgroundColor: colors.action.focus,
     borderColor: colors.action.focus
-  },
-  segmentLabel: {
-    textAlign: "center"
-  },
-  previewBox: {
-    backgroundColor: colors.surface.raised,
-    borderRadius: radius.field,
-    gap: spacing.xs,
-    padding: spacing.md
-  },
-  buttonRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.sm
   }
 });

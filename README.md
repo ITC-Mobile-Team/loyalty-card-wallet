@@ -60,31 +60,27 @@ The domain layer stays independent from React, Expo, SQLite, navigation, and net
 
 Prerequisites:
 
-- Node.js 22 LTS or another version accepted by the installed React Native packages.
+- Node.js 22.23.1. The tracked `.nvmrc`, `.node-version`, and `package.json` engine contract use this release.
 - npm.
 - Expo CLI through `npx expo`.
 - Xcode with an iOS 18 simulator for iOS checks.
 - Android Studio with an Android 11/API 30 emulator for Android checks.
 
-Avoid Node.js 23 for routine work because current React Native packages print engine warnings for that range.
+Node.js 23 is unsupported by the current React Native/Metro dependency range.
 
 Install dependencies:
 
 ```sh
-npm install
+npm ci
 ```
 
 Run the automated baseline:
 
 ```sh
-npx expo install --check
-npx expo-doctor
-npm run typecheck
-npm run lint
-npm test
+npm run verify
 ```
 
-GitHub Actions runs the same baseline on pushes and pull requests to `main`.
+The aggregate command checks Expo package alignment, Expo Doctor, TypeScript, lint, tests, native prebuild generation, and generated widget/native-surface contracts. GitHub Actions runs the same command on pushes and pull requests to `main`.
 
 ## Run The App
 
@@ -132,6 +128,13 @@ Do not commit Google Maps API keys. Android builds read `GOOGLE_MAPS_ANDROID_API
 | `npm run typecheck` | Run TypeScript without emitting files. |
 | `npm run lint` | Run ESLint. |
 | `npm test` | Compile tests and run Node's test runner. |
+| `npm run verify` | Run the complete automated release baseline. |
+| `npm run fixtures:barcodes` | Regenerate privacy-safe barcode PNG fixtures. |
+| `npm run verify:barcode-corpus:ios` | Measure Apple Vision recall and precision against the executable corpus on macOS. |
+| `npm run test:native-journeys:ios` | Run iOS-tagged Maestro journeys when the CLI and native build are available. |
+| `npm run test:native-journeys:android` | Run Android-tagged Maestro journeys when the CLI and API 30 build are available. |
+
+Native journey setup, supported automation, and exact manual acceptance gaps are documented in [docs/qa/native-journey-automation.md](docs/qa/native-journey-automation.md).
 
 ## Documentation
 

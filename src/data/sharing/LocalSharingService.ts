@@ -81,6 +81,9 @@ function validateExportedCard(value: unknown): ExportedCard {
     cardNumber: value.cardNumber,
     barcodeFormat: value.barcodeFormat,
     backgroundColor: typeof value.backgroundColor === "string" ? value.backgroundColor : undefined,
+    isArchived: typeof value.isArchived === "boolean" ? value.isArchived : undefined,
+    isFavorite: typeof value.isFavorite === "boolean" ? value.isFavorite : undefined,
+    lastUsedAt: typeof value.lastUsedAt === "string" ? value.lastUsedAt : undefined,
     notes: typeof value.notes === "string" ? value.notes : undefined,
     images: value.images?.map((image) => {
       assertObject(image, "Imported image must be an object.");
@@ -120,6 +123,9 @@ function toCreateCardInput(card: ExportedCard): CreateCardInput {
     cardNumber: card.cardNumber,
     barcodeFormat: card.barcodeFormat,
     backgroundColor: card.backgroundColor,
+    isArchived: card.isArchived,
+    isFavorite: card.isFavorite,
+    lastUsedAt: card.lastUsedAt,
     notes: card.notes
   };
 }
@@ -282,6 +288,10 @@ export class LocalSharingService implements SharingService {
       backgroundColor: card.backgroundColor,
       notes: card.notes
     };
+
+    if (card.isArchived) exportedCard.isArchived = true;
+    if (card.isFavorite) exportedCard.isFavorite = true;
+    if (card.lastUsedAt) exportedCard.lastUsedAt = card.lastUsedAt;
 
     if (!includeImages) {
       return exportedCard;

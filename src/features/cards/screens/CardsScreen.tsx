@@ -1,6 +1,7 @@
 import { useEffect } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
-import { Plus } from "lucide-react-native";
+import type { ReactNode } from "react";
+import { Pressable, StyleSheet, TextInput, View } from "react-native";
+import { Archive, ListFilter, Plus, Search, Star } from "lucide-react-native";
 
 import { AppButton } from "@/components/ui/AppButton";
 import { AppText } from "@/components/ui/AppText";
@@ -9,7 +10,7 @@ import { Screen } from "@/components/ui/Screen";
 import { CardsGridSkeletonView } from "@/components/views/CardsGridSkeletonView";
 import { CardsListView } from "@/components/views/CardsListView";
 import { useStartupSplash } from "@/core/startup/StartupSplash";
-import { colors, radius, spacing } from "@/design/tokens";
+import { colors, radius, spacing, typography } from "@/design/tokens";
 import { useCards } from "@/features/cards/hooks/useCards";
 
 type CardsScreenProps = {
@@ -19,7 +20,21 @@ type CardsScreenProps = {
 };
 
 export function CardsScreen({ onAddCard, onOpenCard, refreshSignal = 0 }: CardsScreenProps) {
-  const { cards, error, isLoading, refresh } = useCards();
+  const {
+    cards,
+    error,
+    filters,
+    isLoading,
+    markUsed,
+    refresh,
+    setArchived,
+    setFavoriteOnly,
+    setSearch,
+    setSort,
+    toggleArchive,
+    toggleFavorite,
+    total
+  } = useCards();
   const { markReady } = useStartupSplash();
 
   useEffect(() => {
@@ -33,6 +48,14 @@ export function CardsScreen({ onAddCard, onOpenCard, refreshSignal = 0 }: CardsS
       markReady();
     }
   }, [isLoading, markReady]);
+
+  async function handleOpenCard(cardId: string) {
+    const item = cards.find(({ card }) => card.id === cardId);
+    if (item) {
+      void markUsed(item.card);
+    }
+    onOpenCard(cardId);
+  }
 
   return (
     <Screen contentContainerStyle={styles.content} edges={["top", "bottom", "left", "right"]}>
@@ -52,6 +75,37 @@ export function CardsScreen({ onAddCard, onOpenCard, refreshSignal = 0 }: CardsS
           <Plus color={colors.text.inverse} size={28} strokeWidth={3} />
         </Pressable>
       </View>
+      <View style={styles.searchField}>
+        <Search color={colors.text.muted} size={20} />
+        <TextInput
+          accessibilityLabel="Search cards"
+          onChangeText={setSearch}
+          placeholder="Search cards"
+          placeholderTextColor={colors.text.muted}
+          style={styles.searchInput}
+          value={filters.search}
+        />
+      </View>
+      <View style={styles.controls}>
+        <FilterChip
+          icon={<ListFilter color={filters.sort === "alphabetical" ? colors.text.inverse : colors.text.primary} size={16} />}
+          label={filters.sort === "recent" ? "Recent" : "A–Z"}
+          onPress={() => setSort(filters.sort === "recent" ? "alphabetical" : "recent")}
+          selected={filters.sort === "alphabetical"}
+        />
+        <FilterChip
+          icon={<Star color={filters.favoriteOnly ? colors.text.inverse : colors.text.primary} size={16} />}
+          label="Favorites"
+          onPress={() => setFavoriteOnly(!filters.favoriteOnly)}
+          selected={filters.favoriteOnly}
+        />
+        <FilterChip
+          icon={<Archive color={filters.archived ? colors.text.inverse : colors.text.primary} size={16} />}
+          label="Archived"
+          onPress={() => setArchived(!filters.archived)}
+          selected={filters.archived}
+        />
+      </View>
       {isLoading && cards.length === 0 ? <CardsGridSkeletonView /> : null}
       {error && cards.length === 0 ? (
         <EmptyState
@@ -62,10 +116,27 @@ export function CardsScreen({ onAddCard, onOpenCard, refreshSignal = 0 }: CardsS
         />
       ) : null}
       {cards.length > 0 || (!isLoading && !error) ? (
-        <CardsListView cards={cards} onAddCard={onAddCard} onOpenCard={onOpenCard} />
+        <CardsListView
+          cards={cards}
+          emptyBody={
+            filters.search || filters.favoriteOnly || filters.archived
+              ? "Try changing the search or filters."
+              : undefined
+          }
+          emptyTitle={
+            filters.search || filters.favoriteOnly || filters.archived ? "No Matching Cards" : undefined
+          }
+          onAddCard={onAddCard}
+          onOpenCard={handleOpenCard}
+          onToggleArchive={toggleArchive}
+          onToggleFavorite={toggleFavorite}
+        />
       ) : null}
       {error && cards.length === 0 ? <AppButton label="Scan Card" onPress={onAddCard} variant="secondary" /> : null}
       {error && cards.length > 0 ? <AppText color={colors.text.secondary}>Could not refresh cards.</AppText> : null}
+      {total > cards.length ? (
+        <AppText color={colors.text.muted}>Showing the first {cards.length} of {total} cards.</AppText>
+      ) : null}
     </Screen>
   );
 }
@@ -74,6 +145,23 @@ const styles = StyleSheet.create({
   content: {
     gap: spacing.xl,
     paddingTop: spacing.lg
+  },
+  controls: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.xs
+  },
+  filterChip: {
+    alignItems: "center",
+    backgroundColor: colors.surface.field,
+    borderRadius: 999,
+    flexDirection: "row",
+    gap: spacing.xxs,
+    minHeight: 44,
+    paddingHorizontal: spacing.sm
+  },
+  filterChipSelected: {
+    backgroundColor: colors.action.focus
   },
   header: {
     alignItems: "center",
@@ -95,5 +183,45 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.78
+  },
+  searchField: {
+    alignItems: "center",
+    backgroundColor: colors.surface.field,
+    borderRadius: radius.field,
+    flexDirection: "row",
+    gap: spacing.xs,
+    minHeight: 48,
+    paddingHorizontal: spacing.md
+  },
+  searchInput: {
+    color: colors.text.primary,
+    flex: 1,
+    ...typography.bodyPrimary
   }
 });
+
+function FilterChip({
+  icon,
+  label,
+  onPress,
+  selected
+}: {
+  icon: ReactNode;
+  label: string;
+  onPress: () => void;
+  selected: boolean;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ selected }}
+      onPress={onPress}
+      style={[styles.filterChip, selected && styles.filterChipSelected]}
+    >
+      {icon}
+      <AppText color={selected ? colors.text.inverse : colors.text.primary} variant="caption">
+        {label}
+      </AppText>
+    </Pressable>
+  );
+}

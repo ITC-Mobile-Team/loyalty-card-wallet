@@ -18,6 +18,8 @@ import { useCreateCardDraft } from "@/features/add-card/hooks/useCreateCardDraft
 
 type AddScanScreenProps = {
   onEnterManually: () => void;
+  onOpenCatalog: () => void;
+  onImportBulk: () => void;
   onImportPhoto: () => void;
   onSaved: (cardId: string) => void;
 };
@@ -28,7 +30,9 @@ const scanDebounceMs = 1500;
 
 export function AddScanScreen({
   onEnterManually,
+  onImportBulk,
   onImportPhoto,
+  onOpenCatalog,
   onSaved
 }: AddScanScreenProps) {
   const { errorReporter, interactionFeedback, scannerService } = useDependencies();
@@ -172,7 +176,9 @@ export function AddScanScreen({
         {scanError ? <AppText color={colors.action.danger}>{scanError.message}</AppText> : null}
         <View style={styles.actions}>
           <AppButton label="Enter Manually" onPress={onEnterManually} variant="secondary" />
+          <AppButton label="Choose Merchant" onPress={onOpenCatalog} variant="secondary" />
           <AppButton label="Add From Photo" onPress={onImportPhoto} variant="secondary" />
+          <AppButton label="Import Multiple Screenshots" onPress={onImportBulk} variant="secondary" />
         </View>
       </View>
     </Screen>

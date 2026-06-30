@@ -36,7 +36,19 @@ export type StoreSearchResult = {
   total: number;
 };
 
+export type StoreSourceIdentity = {
+  id: string;
+  type: "node" | "relation" | "way";
+};
+
+export type StoreSourceResolution = {
+  reference: StoreSourceIdentity;
+  status: "found" | "missing";
+  store?: StoreSummary;
+};
+
 export type StoreRepository = {
   getCachedById(id: string): Promise<StoreSummary | null>;
+  resolveSourceReferences(references: readonly StoreSourceIdentity[]): Promise<StoreSourceResolution[]>;
   search(query: StoreSearchQuery): Promise<StoreSearchResult>;
 };

@@ -1,0 +1,19 @@
+appId: com.anonymous.loyaltycardwallet
+name: Android app shell and Phase 2 surfaces
+tags:
+  - android
+  - smoke
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Cards"
+- tapOn: "Account"
+- assertVisible: "Backup"
+- assertVisible: "Security"
+- assertVisible: "Diagnostics"
+- assertVisible: "Maintenance"
+- tapOn: "Stores"
+- assertVisible: "Near Me"
+- assertNotVisible: "Location access is needed for Near Me.*"
+- tapOn: "Cards"
+- assertVisible: "Add card"

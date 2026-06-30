@@ -3,9 +3,11 @@ import { Image, Pressable, StyleSheet, TextInput, View } from "react-native";
 import { AppButton } from "@/components/ui/AppButton";
 import { AppText } from "@/components/ui/AppText";
 import { colors, radius, spacing, typography } from "@/design/tokens";
+import { BARCODE_CAPABILITY_REGISTRY } from "@/domain/barcode/BarcodeCapabilities";
 import type { BarcodeFormat } from "@/domain/cards/Card";
 
 export type AddCardFormValues = {
+  backgroundColor?: string;
   barcodeFormat: BarcodeFormat;
   cardNumber: string;
   notes?: string;
@@ -29,7 +31,9 @@ type AddCardFormViewProps = {
   values: AddCardFormValues;
 };
 
-const formatOptions: BarcodeFormat[] = ["code128", "code39", "ean13", "ean8", "upca", "upce", "itf", "qr"];
+const formatOptions: BarcodeFormat[] = BARCODE_CAPABILITY_REGISTRY
+  .filter((item) => item.persistable)
+  .map((item) => item.format);
 
 export function AddCardFormView({
   errorMessage,

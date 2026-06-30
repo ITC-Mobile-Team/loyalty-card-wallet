@@ -1,0 +1,17 @@
+appId: com.anonymous.loyalty-card-wallet
+name: iOS Near Me permission denial preserves wallet access
+tags:
+  - ios
+  - phase4
+---
+- launchApp:
+    clearState: true
+    permissions:
+      location: deny
+- tapOn: "Stores"
+- assertVisible: "Near Me"
+- assertNotVisible: "Location access is needed for Near Me.*"
+- tapOn: "Near Me"
+- assertVisible: "Location access is needed for Near Me. City search and saved cards remain available."
+- tapOn: "Cards"
+- assertVisible: "Add card"

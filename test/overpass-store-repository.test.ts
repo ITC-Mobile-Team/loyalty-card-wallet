@@ -183,3 +183,56 @@ test("Overpass store repository builds nearby queries from coordinates", async (
 
   assert.equal(decodeURIComponent(String(httpClient.requests[0].body)).includes("around:2500,50.45,30.52"), true);
 });
+
+test("nearby lookups do not reuse a coordinate-derived origin cache", async () => {
+  const httpClient = new FakeHttpClient();
+  const repository = new OverpassStoreRepository(httpClient);
+  const query = {
+    origin: {
+      kind: "nearby" as const,
+      latitude: 50.4501,
+      longitude: 30.5234,
+      radiusMeters: 2500
+    }
+  };
+
+  await repository.search(query);
+  await repository.search(query);
+
+  assert.equal(httpClient.requests.length, 2);
+  assert.equal((await repository.getCachedById("node/1"))?.name, "Fresh Market");
+});
+
+test("source resolution verifies explicit OSM IDs and reports missing references", async () => {
+  const httpClient = new FakeHttpClient();
+  const repository = new OverpassStoreRepository(httpClient);
+
+  const result = await repository.resolveSourceReferences([
+    { id: "1", type: "node" },
+    { id: "404", type: "relation" }
+  ]);
+  const body = decodeURIComponent(String(httpClient.requests[0].body));
+
+  assert.equal(body.includes("node(1);"), true);
+  assert.equal(body.includes("relation(404);"), true);
+  assert.equal(result[0].status, "found");
+  assert.equal(result[0].store?.id, "node/1");
+  assert.deepEqual(result[1], {
+    reference: { id: "404", type: "relation" },
+    status: "missing"
+  });
+});
+
+test("source resolution batches more than 100 OSM references", async () => {
+  const httpClient = new FakeHttpClient();
+  const repository = new OverpassStoreRepository(httpClient);
+  const references = Array.from({ length: 101 }, (_, index) => ({
+    id: String(index + 1),
+    type: "node" as const
+  }));
+
+  const result = await repository.resolveSourceReferences(references);
+
+  assert.equal(httpClient.requests.length, 2);
+  assert.equal(result.length, 101);
+});

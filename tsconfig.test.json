@@ -14,6 +14,7 @@
     "src/domain/**/*.ts",
     "src/features/stores/**/*.ts",
     "src/features/sharing/**/*.ts",
+    "src/features/importing/**/*.ts",
     "test/**/*.ts"
   ]
 }

@@ -1,0 +1,83 @@
+appId: com.anonymous.loyalty-card-wallet
+name: iOS bulk import decodes a real fixture and resumes after termination
+tags:
+  - ios
+  - phase1
+---
+- addMedia:
+    - "../test/fixtures/barcodes/code128-clear.png"
+    - "../test/fixtures/barcodes/code128-rotation.png"
+    - "../test/fixtures/barcodes/code128-scale.png"
+    - "../test/fixtures/barcodes/code128-low_contrast.png"
+    - "../test/fixtures/barcodes/code128-blur.png"
+    - "../test/fixtures/barcodes/code128-glare.png"
+    - "../test/fixtures/barcodes/code39-clear.png"
+    - "../test/fixtures/barcodes/code39-rotation.png"
+    - "../test/fixtures/barcodes/code39-scale.png"
+    - "../test/fixtures/barcodes/code39-low_contrast.png"
+    - "../test/fixtures/barcodes/code39-blur.png"
+    - "../test/fixtures/barcodes/code39-glare.png"
+    - "../test/fixtures/barcodes/ean13-clear.png"
+    - "../test/fixtures/barcodes/ean13-rotation.png"
+    - "../test/fixtures/barcodes/ean13-scale.png"
+    - "../test/fixtures/barcodes/ean13-low_contrast.png"
+    - "../test/fixtures/barcodes/ean13-blur.png"
+    - "../test/fixtures/barcodes/ean13-glare.png"
+    - "../test/fixtures/barcodes/ean8-clear.png"
+    - "../test/fixtures/barcodes/ean8-rotation.png"
+    - "../test/fixtures/barcodes/ean8-scale.png"
+    - "../test/fixtures/barcodes/ean8-low_contrast.png"
+    - "../test/fixtures/barcodes/ean8-blur.png"
+    - "../test/fixtures/barcodes/ean8-glare.png"
+    - "../test/fixtures/barcodes/upca-clear.png"
+    - "../test/fixtures/barcodes/upca-rotation.png"
+    - "../test/fixtures/barcodes/upca-scale.png"
+    - "../test/fixtures/barcodes/upca-low_contrast.png"
+    - "../test/fixtures/barcodes/upca-blur.png"
+    - "../test/fixtures/barcodes/upca-glare.png"
+    - "../test/fixtures/barcodes/upce-clear.png"
+    - "../test/fixtures/barcodes/upce-rotation.png"
+    - "../test/fixtures/barcodes/upce-scale.png"
+    - "../test/fixtures/barcodes/upce-low_contrast.png"
+    - "../test/fixtures/barcodes/upce-blur.png"
+    - "../test/fixtures/barcodes/upce-glare.png"
+    - "../test/fixtures/barcodes/itf-clear.png"
+    - "../test/fixtures/barcodes/itf-rotation.png"
+    - "../test/fixtures/barcodes/itf-scale.png"
+    - "../test/fixtures/barcodes/itf-low_contrast.png"
+    - "../test/fixtures/barcodes/itf-blur.png"
+    - "../test/fixtures/barcodes/itf-glare.png"
+    - "../test/fixtures/barcodes/qr-clear.png"
+    - "../test/fixtures/barcodes/qr-rotation.png"
+    - "../test/fixtures/barcodes/qr-scale.png"
+    - "../test/fixtures/barcodes/qr-low_contrast.png"
+    - "../test/fixtures/barcodes/qr-blur.png"
+    - "../test/fixtures/barcodes/qr-glare.png"
+    - "../test/fixtures/barcodes/unreadable-blank.png"
+    - "../test/fixtures/barcodes/ean13-invalid-checksum.png"
+- launchApp:
+    clearState: true
+    permissions:
+      photos: allow
+- tapOn: "Add card"
+- tapOn: "Import Multiple Screenshots"
+- tapOn: "Choose Screenshots"
+- tapOn:
+    id: "PXGGridLayout-Info"
+    index: 0
+    optional: true
+- tapOn:
+    text: "Photo, .*"
+    index: 0
+    optional: true
+- tapOn:
+    text: "Add"
+    optional: true
+- tapOn:
+    text: "Done"
+    optional: true
+- assertVisible: "1 of 1 processed"
+- killApp
+- launchApp:
+    stopApp: false
+- assertVisible: "1 of 1 processed"

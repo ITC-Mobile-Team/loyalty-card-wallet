@@ -39,3 +39,15 @@
 2. Open the destructive action menu.
 3. Confirm deletion.
 4. Remove the database record and app-owned image files.
+
+## Find A Nearby Saved Card
+
+1. Open Stores.
+2. Tap `Near Me`.
+3. Allow foreground location when requested.
+4. Review clearly labeled suggestions based on nearby OpenStreetMap store names and saved-card merchant names.
+5. Confirm the suggested card, choose `Correct` to select another card merchant, or dismiss the suggestion.
+6. Use the confirmed card link to open the saved card when needed.
+7. Disable, re-enable, remove, or repair the link from Stores.
+
+Nearby lookup is optional. Permission, network, or matching failure does not prevent opening cards manually from the Cards tab.

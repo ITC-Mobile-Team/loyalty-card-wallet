@@ -2,11 +2,13 @@ import { useCallback, useState } from "react";
 
 import { useDependencies } from "@/core/di/useDependencies";
 import { isAppError, toUnknownAppError, type AppError } from "@/core/errors/AppError";
+import { canPersistBarcode } from "@/domain/barcode/BarcodeCapabilities";
 import type { BarcodeFormat, LoyaltyCard } from "@/domain/cards/Card";
 import type { PickedImage } from "@/domain/images/ImageSelection";
 import { attachPrimaryCardImage } from "@/features/images/use-cases/cardImageWorkflow";
 
 export type CreateCardDraft = {
+  backgroundColor?: string;
   barcodeFormat: BarcodeFormat;
   cardNumber: string;
   notes?: string;
@@ -42,7 +44,16 @@ function validateDraft(draft: CreateCardDraft): CreateCardDraft {
     } satisfies AppError;
   }
 
+  if (!canPersistBarcode(draft.barcodeFormat)) {
+    throw {
+      kind: "validation",
+      field: "barcodeFormat",
+      message: `${draft.barcodeFormat.toUpperCase()} cannot be saved until checkout rendering is supported.`
+    } satisfies AppError;
+  }
+
   return {
+    backgroundColor: draft.backgroundColor,
     barcodeFormat: draft.barcodeFormat,
     cardNumber,
     notes: draft.notes?.trim(),

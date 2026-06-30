@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "private": true,
+  "engines": {
+    "node": ">=22.23.1 <23"
+  },
   "scripts": {
     "start": "expo start",
     "start:web": "expo start --web --localhost",
@@ -12,23 +15,36 @@
     "ios:device": "expo run:ios --device",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "rm -rf .test-build && tsc -p tsconfig.test.json && node --test \".test-build/test/**/*.test.js\""
+    "test": "rm -rf .test-build && tsc -p tsconfig.test.json && node --test \".test-build/test/**/*.test.js\"",
+    "fixtures:barcodes": "node scripts/generate-barcode-fixtures.js",
+    "verify": "npx expo install --check && npx expo-doctor && npm run typecheck && npm run lint && npm test && npx expo prebuild --no-install && npm run verify:native-surfaces",
+    "verify:barcode-corpus:ios": "node scripts/verify-barcode-corpus-ios.js",
+    "verify:native-surfaces": "node scripts/verify-external-surfaces.js",
+    "test:native-journeys:android": "maestro test .maestro --include-tags=android",
+    "test:native-journeys:ios": "maestro test .maestro --include-tags=ios"
   },
   "dependencies": {
+    "@noble/hashes": "^2.2.0",
     "expo": "~56.0.12",
     "expo-brightness": "~56.0.5",
     "expo-build-properties": "~56.0.19",
     "expo-camera": "~56.0.8",
     "expo-clipboard": "~56.0.4",
     "expo-constants": "~56.0.18",
+    "expo-crypto": "~56.0.4",
+    "expo-document-picker": "~56.0.4",
+    "expo-file-system": "~56.0.8",
     "expo-image-picker": "~56.0.18",
     "expo-linking": "~56.0.14",
+    "expo-local-authentication": "~56.0.4",
     "expo-location": "~56.0.18",
     "expo-maps": "~56.0.7",
     "expo-router": "~56.2.11",
+    "expo-sharing": "~56.0.18",
     "expo-splash-screen": "~56.0.10",
     "expo-sqlite": "~56.0.5",
     "expo-status-bar": "~56.0.4",
+    "expo-system-ui": "~56.0.5",
     "lucide-react-native": "^1.17.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -41,9 +57,11 @@
   "devDependencies": {
     "@types/node": "^25.9.2",
     "@types/react": "~19.2.2",
+    "bwip-js": "^4.11.1",
     "eslint": "^9.39.4",
     "eslint-config-expo": "~56.0.4",
     "eslint-import-resolver-typescript": "^4.4.5",
+    "pngjs": "^7.0.0",
     "typescript": "~6.0.3"
   }
 }

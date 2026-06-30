@@ -10,7 +10,8 @@
     "ios": {
       "supportsTablet": true,
       "deploymentTarget": "18.0",
-      "bundleIdentifier": "com.anonymous.loyalty-card-wallet"
+      "bundleIdentifier": "com.anonymous.loyalty-card-wallet",
+      "userInterfaceStyle": "automatic"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,7 +26,8 @@
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.CAMERA"
       ],
-      "package": "com.anonymous.loyaltycardwallet"
+      "package": "com.anonymous.loyaltycardwallet",
+      "userInterfaceStyle": "dark"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -67,6 +69,13 @@
         }
       ],
       [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow Loyalty Card Wallet to use Face ID to unlock your local wallet."
+        }
+      ],
+      "expo-sharing",
+      [
         "expo-build-properties",
         {
           "android": {
@@ -83,7 +92,8 @@
         {
           "requestLocationPermission": false
         }
-      ]
+      ],
+      "./plugins/external-surfaces"
     ],
     "experiments": {
       "typedRoutes": true

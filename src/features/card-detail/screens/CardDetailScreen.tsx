@@ -13,6 +13,7 @@ import { useFocusedBrightnessBoost } from "@/features/barcode/hooks/useFocusedBr
 import { useRenderedBarcode } from "@/features/barcode/hooks/useRenderedBarcode";
 import { useCardDetails } from "@/features/card-detail/hooks/useCardDetails";
 import { useShareCardLink } from "@/features/sharing/useShareCardLink";
+import { useExternalCardSelection } from "@/features/external-surfaces/hooks/useExternalCardSelection";
 
 type CardDetailScreenProps = {
   cardId: string;
@@ -25,17 +26,9 @@ type CardDetailScreenProps = {
 type DetailAction = {
   cancel?: boolean;
   destructive?: boolean;
-  key: "scanMode" | "share" | "edit" | "delete" | "cancel";
+  key: "scanMode" | "widget" | "share" | "edit" | "delete" | "cancel";
   label: string;
 };
-
-const detailActions: readonly DetailAction[] = [
-  { key: "scanMode", label: "Scan Mode" },
-  { key: "share", label: "Share Card" },
-  { key: "edit", label: "Edit Card" },
-  { key: "delete", label: "Delete Card", destructive: true },
-  { key: "cancel", label: "Cancel", cancel: true }
-] as const;
 
 type DetailActionKey = DetailAction["key"];
 
@@ -54,6 +47,7 @@ export function CardDetailScreen({
     share,
     shareStatusMessage
   } = useShareCardLink(cardId);
+  const externalSelection = useExternalCardSelection(card);
   const barcodeInput = useMemo(
     () => (card ? { format: card.barcodeFormat, value: card.cardNumber } : null),
     [card]
@@ -109,13 +103,29 @@ export function CardDetailScreen({
       delete: handleDelete,
       edit: onEdit,
       scanMode: onScanMode,
-      share: handleShare
+      share: handleShare,
+      widget: () => void externalSelection.toggle()
     };
 
     handlers[action]();
   }
 
   function handleOpenActions() {
+    const detailActions: readonly DetailAction[] = [
+      { key: "scanMode", label: "Scan Mode" },
+      ...(externalSelection.available
+        ? [
+            {
+              key: "widget" as const,
+              label: externalSelection.isSelected ? "Remove From Widget" : "Add To Widget"
+            }
+          ]
+        : []),
+      { key: "share", label: "Share Card" },
+      { key: "edit", label: "Edit Card" },
+      { key: "delete", label: "Delete Card", destructive: true },
+      { key: "cancel", label: "Cancel", cancel: true }
+    ];
     const options = detailActions.map((action) => action.label);
     const cancelButtonIndex = detailActions.findIndex((action) => action.cancel);
     const destructiveButtonIndex = detailActions.findIndex((action) => action.destructive);
@@ -168,13 +178,21 @@ export function CardDetailScreen({
           imageUri={images.primaryImageUri}
           isBarcodeLoading={isBarcodeLoading}
           onCopyCardNumber={() => void copyBarcodeValue(card.cardNumber)}
-          onOpenActions={isDeleting || isSharing ? () => undefined : handleOpenActions}
+          onOpenActions={
+            isDeleting || isSharing || externalSelection.isUpdating ? () => undefined : handleOpenActions
+          }
         />
       ) : null}
       {copyFeedback ? <AppText color={colors.text.secondary}>{copyFeedback.message}</AppText> : null}
       {isSharing ? <AppText color={colors.text.secondary}>Preparing share link...</AppText> : null}
       {shareStatusMessage ? <AppText color={colors.text.secondary}>{shareStatusMessage}</AppText> : null}
       {shareError ? <AppText color={colors.text.secondary}>{shareError.message}</AppText> : null}
+      {externalSelection.statusMessage ? (
+        <AppText color={colors.text.secondary}>{externalSelection.statusMessage}</AppText>
+      ) : null}
+      {externalSelection.error ? (
+        <AppText color={colors.text.secondary}>{externalSelection.error.message}</AppText>
+      ) : null}
       {isLoading && card ? <AppText color={colors.text.secondary}>Refreshing card...</AppText> : null}
       {error && card ? <AppText color={colors.text.secondary}>Could not refresh card.</AppText> : null}
     </Screen>

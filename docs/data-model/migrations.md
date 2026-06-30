@@ -37,10 +37,18 @@ The exact file extension depends on the SQLite tooling selected during implement
 | --- | --- | --- |
 | 1 | `001_create_cards_images_metadata` | Creates schema version tracking, app metadata, cards, private image payloads, and card image metadata. |
 | 2 | `002_allow_duplicate_imported_cards` | Removes the duplicate card uniqueness index so import can honor the `Keep Both` strategy. |
+| 3 | `003_add_phase_one_organization_and_import_sessions` | Adds favorites, archive, recent-use metadata, indexed duplicate keys, resumable import sessions/drafts, and merchant catalog overrides. |
+| 4 | `004_add_user_owned_merchant_links` | Adds indexed card merchant identities, confirmed user-owned merchant links, optional OSM evidence, enabled state, and persisted dismissals. |
 
 The production migration runner applies only migrations with a version greater than the stored `schema_version`. It rejects unsupported future schema versions instead of resetting local data.
 
 Runtime migration ownership is centralized in the composition root. Production code creates the raw Expo SQLite database provider, wraps it with a migrated database provider, and injects that migrated provider into all SQLite-backed adapters. Repositories and stores should assume their provider already returns a migration-ready database; they must not own independent migration promises.
+
+Phase 2 keeps the SQLite schema at version 3. Optional local-security settings use the existing `app_metadata` table, so no forward schema migration is required. Encrypted backup envelope and payload versions are independent external-format versions and must not be confused with `schema_version`.
+
+Phase 3 also keeps SQLite schema version 3. Widget opt-in, revisions, expiry, and revocation live in the independently versioned external snapshot file. Snapshot envelope/payload versions must not be added to `schema_migrations`.
+
+Phase 4 advances SQLite to schema version 4 with one additive forward migration from version 3. Existing cards remain unchanged. Missing card merchant identities are backfilled lazily in batches before the first merchant lookup, and new/renamed cards maintain the projection through the SQLite card repository. No card, image, import, security, diagnostics, backup, sharing, or external snapshot table is dropped or rewritten.
 
 ## Testing
 

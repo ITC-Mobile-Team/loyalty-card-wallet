@@ -4,6 +4,9 @@ export type CreateCardInput = {
   storeName: string;
   cardNumber: string;
   barcodeFormat: BarcodeFormat;
+  isArchived?: boolean;
+  isFavorite?: boolean;
+  lastUsedAt?: string;
   primaryImageId?: string;
   thumbnailImageId?: string;
   backgroundColor?: string;

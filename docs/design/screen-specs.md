@@ -16,12 +16,39 @@ States:
 - Empty: show a compact empty state with one primary add-card action.
 - Loading: show skeleton card tiles only during first database read.
 - Error: show retry action and keep the add-card action available if local storage can still write.
+- Filtered empty: explain that no cards match and keep search/filter controls available.
 
 Rules:
 - Tapping a tile opens card detail.
 - Long merchant names wrap without changing neighboring tile size.
 - User-created generic cards must look as complete as brand-specific cards.
 - The Cards tab should not show both a native tab header title and an in-screen wallet title.
+- Search, recent/alphabetical sort, favorite-only, and archived filters remain above the card list.
+- Archived cards are excluded by default and restored from the Archived filter.
+- Opening a card records recent use without delaying navigation.
+
+## Bulk Import Review
+
+Purpose: migrate multiple screenshot barcodes without retaining source screenshots or losing successful drafts.
+
+Layout:
+- Modal route at `/add/bulk`.
+- Compact session summary and filters for all, ready, needs attention, duplicate, and failed drafts.
+- Draft rows expose merchant, card number, supported barcode format, status text, and a review action.
+- Primary action saves ready drafts; a separate explicit action may keep duplicate cards.
+
+States:
+- No session: explain local processing and allow selecting up to 50 screenshots.
+- Processing: disable conflicting actions while bounded decoding or persistence runs.
+- Needs attention: keep detected values editable and explain the blocking field.
+- Failed: show a safe per-image error and require reselection when source data is needed.
+- Resumed: reload the active session and normalized drafts after app restart.
+- Partial success: imported drafts remain marked while retryable drafts stay available.
+
+Rules:
+- Never persist source screenshot bytes or URIs.
+- Never save an unrenderable barcode format.
+- Cancellation does not delete cards saved before cancellation.
 
 ## Add Card Entry Point
 
@@ -195,6 +222,8 @@ MVP contents:
 - Single scrollable list of the bounded OpenStreetMap result set.
 - Store detail push screen opened from a store row.
 - Loading, empty, error, retry, and attribution states.
+- Clearly labeled nearby card suggestions shown only after `Near Me`.
+- Confirmed merchant-link management using existing grouped cards, rows, buttons, spacing, and tokens.
 
 Rules:
 - Store discovery uses OpenStreetMap/Overpass data, not a discounts or loyalty-offers API.
@@ -206,17 +235,67 @@ Rules:
 - Store detail shows a compact embedded map preview when valid coordinates exist.
 - Store detail provides `Open in Maps` and `Copy Coordinates` actions when valid coordinates exist.
 - Category chips are local filters only; changing a category chip must not send another Overpass request.
+- Store text filtering is local and must not send an Overpass request on each keystroke.
+- A normalized-name match is labeled `Suggestion` and requires confirmation before persistence.
+- `Correct` lets the user choose another saved-card merchant.
+- `Dismiss` suppresses that merchant/store suggestion.
+- Confirmed links expose disable, re-enable, and removal.
+- Confirmed links expose correction both from a nearby confirmed result and from the Merchant Links management section.
+- A directly verified missing OSM reference is labeled and requires an explicit `Repair Link` action. Absence from the bounded nearby list alone must not label a link stale.
+- Permission, network, ambiguity, no-match, dismissal, disabled-link, stale-source, and storage failures keep manual card access available.
+- Phase 4 holds the existing dark utility design, navigation hierarchy, tokens, typography, spacing, density, and restrained motion.
 
 ## Account
 
 Purpose: match the reference navigation model while keeping the MVP local-first.
 
-MVP contents:
-- App version.
-- Export/import actions for backing up or sharing cards.
-- Privacy note that cards are stored locally.
-- Local settings and maintenance actions.
+Phase 2 contents:
+- Local summary and app version.
+- Grouped Backup section with passphrase entry, confirmation for export, system file selection, authenticated restore preview, duplicate policy, and structured per-card results.
+- Grouped Security section with optional app lock status, enable/disable action, and lock-now action.
+- Diagnostics and maintenance tools are hidden from the normal user-facing Account screen unless a later support or developer surface explicitly exposes them.
 
 Rules:
 - No sign-in requirement in MVP.
 - The tab label is `Account`, but it can start as a local account/settings screen.
+- Explain before export that forgotten backup passphrases cannot be recovered.
+- Do not display backup passphrases, encrypted bytes, keys, card numbers from diagnostics, or raw platform errors.
+- Preview restore counts and versions before writes.
+- Show per-card imported, skipped, or failed status after restore.
+- State that biometric app lock does not encrypt SQLite at rest.
+- Keep the approved dark utility layout, tokens, typography, spacing, and restrained motion.
+- Backup or security failure must not block Cards, scanner, or checkout.
+
+## Access Gate
+
+Purpose: cover protected app content when optional local authentication is required.
+
+States:
+- Loading settings: keep protected content covered while local policy loads.
+- Locked launch or timeout: show one unlock action and the at-rest encryption disclaimer.
+- Authenticating: disable duplicate prompt attempts.
+- Canceled or failed: remain locked with typed recovery copy.
+- Lockout or unavailable: explain operating-system recovery without exposing protected routes.
+
+Rules:
+- Cover cold launch, resume after timeout, manual lock, and locked deep links.
+- Do not replace native biometric/device-credential prompts.
+- Do not add custom motion or change tab/navigation hierarchy.
+
+## Phone Widgets
+
+Purpose: expose only explicitly selected cards and provide a fast path to the existing checkout barcode flow.
+
+Phone widget contents:
+
+- use the approved dark utility direction where native widget APIs permit;
+- show merchant name, masked card suffix, and an `Open Barcode` affordance;
+- iOS medium/large families may show multiple selected cards; small and Android v1 show the first deterministic active card;
+- tapping an active card opens its existing scan-mode route;
+- missing, stale, revoked, future-version, corrupt, or empty state shows `Open Wallet` and deep-links to Cards.
+
+Rules:
+
+- Card Detail adds only `Add To Widget` or `Remove From Widget` in the existing action surface; it does not change layout, tokens, typography, spacing, hierarchy, or motion.
+- External surfaces do not show notes, images, full diagnostic/error details, coordinates, or backup/security material.
+- Extension/widget UI must not imply that app lock can be prompted outside the main app.

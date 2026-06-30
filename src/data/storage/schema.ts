@@ -3,7 +3,7 @@ import type { ImageMimeType, ImageRole } from "../../domain/images/ImageStore";
 
 export const DATABASE_NAME = "loyalty-card-wallet.db";
 
-export const CURRENT_SCHEMA_VERSION = 2;
+export const CURRENT_SCHEMA_VERSION = 4;
 
 export const SUPPORTED_BARCODE_FORMATS: readonly BarcodeFormat[] = [
   "code128",

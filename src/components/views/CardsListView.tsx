@@ -1,26 +1,39 @@
-import { Image, Pressable, StyleSheet, View } from "react-native";
-import { ChevronRight, ScanLine } from "lucide-react-native";
+import { Image, Pressable, StyleSheet, View, type GestureResponderEvent } from "react-native";
+import { Archive, ChevronRight, ScanLine, Star } from "lucide-react-native";
 
 import { AppText } from "@/components/ui/AppText";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { colors, radius, spacing } from "@/design/tokens";
 import { getCardAccessibilityLabel, getCardInitials, getCardNumberSuffix } from "@/domain/cards/card-display";
 import type { CardListItem } from "@/features/cards/hooks/useCards";
+import type { LoyaltyCard } from "@/domain/cards/Card";
 
 type CardsListViewProps = {
   cards: CardListItem[];
+  emptyBody?: string;
+  emptyTitle?: string;
   onAddCard: () => void;
   onOpenCard: (cardId: string) => void;
+  onToggleArchive: (card: LoyaltyCard) => void;
+  onToggleFavorite: (card: LoyaltyCard) => void;
 };
 
-export function CardsListView({ cards, onAddCard, onOpenCard }: CardsListViewProps) {
+export function CardsListView({
+  cards,
+  emptyBody,
+  emptyTitle,
+  onAddCard,
+  onOpenCard,
+  onToggleArchive,
+  onToggleFavorite
+}: CardsListViewProps) {
   if (cards.length === 0) {
     return (
       <EmptyState
         actionLabel="Scan Card"
-        body="Add your first loyalty card by scanning its barcode."
+        body={emptyBody ?? "Add your first loyalty card by scanning its barcode."}
         onAction={onAddCard}
-        title="No Cards Yet"
+        title={emptyTitle ?? "No Cards Yet"}
       />
     );
   }
@@ -61,10 +74,17 @@ export function CardsListView({ cards, onAddCard, onOpenCard }: CardsListViewPro
                 Ready at checkout
               </AppText>
             </View>
-            <View style={[styles.initialBadge, styles.featuredInitialBadge]}>
-              <AppText color="#76F1B3" variant="titleModal">
-                {getCardInitials(featuredCard.card.storeName)}
-              </AppText>
+            <View style={styles.featuredActions}>
+              <CardActions
+                card={featuredCard.card}
+                onToggleArchive={onToggleArchive}
+                onToggleFavorite={onToggleFavorite}
+              />
+              <View style={[styles.initialBadge, styles.featuredInitialBadge]}>
+                <AppText color="#76F1B3" variant="titleModal">
+                  {getCardInitials(featuredCard.card.storeName)}
+                </AppText>
+              </View>
             </View>
           </View>
           <View style={styles.featuredCopy}>
@@ -135,6 +155,11 @@ export function CardsListView({ cards, onAddCard, onOpenCard }: CardsListViewPro
                   </AppText>
                 ) : null}
               </View>
+              <CardActions
+                card={card}
+                onToggleArchive={onToggleArchive}
+                onToggleFavorite={onToggleFavorite}
+              />
               <ChevronRight color={colors.text.muted} size={22} />
             </Pressable>
           );
@@ -161,6 +186,51 @@ export function CardsListView({ cards, onAddCard, onOpenCard }: CardsListViewPro
             Scan
           </AppText>
         </View>
+      </Pressable>
+    </View>
+  );
+}
+
+function CardActions({
+  card,
+  onToggleArchive,
+  onToggleFavorite
+}: {
+  card: LoyaltyCard;
+  onToggleArchive: (card: LoyaltyCard) => void;
+  onToggleFavorite: (card: LoyaltyCard) => void;
+}) {
+  function handle(
+    event: GestureResponderEvent,
+    action: (card: LoyaltyCard) => void
+  ) {
+    event.stopPropagation();
+    action(card);
+  }
+
+  return (
+    <View style={styles.cardActions}>
+      <Pressable
+        accessibilityLabel={`${card.isFavorite ? "Remove" : "Add"} ${card.storeName} ${card.isFavorite ? "from" : "to"} favorites`}
+        accessibilityRole="button"
+        hitSlop={8}
+        onPress={(event) => handle(event, onToggleFavorite)}
+        style={styles.cardAction}
+      >
+        <Star
+          color={card.isFavorite ? "#FFD166" : colors.text.secondary}
+          fill={card.isFavorite ? "#FFD166" : "transparent"}
+          size={18}
+        />
+      </Pressable>
+      <Pressable
+        accessibilityLabel={`${card.isArchived ? "Restore" : "Archive"} ${card.storeName}`}
+        accessibilityRole="button"
+        hitSlop={8}
+        onPress={(event) => handle(event, onToggleArchive)}
+        style={styles.cardAction}
+      >
+        <Archive color={colors.text.secondary} size={18} />
       </Pressable>
     </View>
   );
@@ -205,6 +275,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     zIndex: 1
+  },
+  featuredActions: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: spacing.sm
   },
   readyPill: {
     alignItems: "center",
@@ -289,6 +364,20 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: spacing.xxs,
     zIndex: 1
+  },
+  cardActions: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: spacing.xxs,
+    zIndex: 2
+  },
+  cardAction: {
+    alignItems: "center",
+    backgroundColor: "rgba(10,10,11,0.72)",
+    borderRadius: radius.icon,
+    height: 44,
+    justifyContent: "center",
+    width: 44
   },
   addCardBanner: {
     alignItems: "center",

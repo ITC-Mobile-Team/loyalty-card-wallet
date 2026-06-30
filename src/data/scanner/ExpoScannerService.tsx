@@ -5,6 +5,8 @@ import { Platform, StyleSheet, View } from "react-native";
 import type { AppError } from "@/core/errors/AppError";
 import type { ImageBarcodeDecoder, ImageBarcodeResult } from "@/core/scanner/ImageBarcodeDecoder";
 import type {
+  BulkPhotoScanItem,
+  BulkPhotoScanResult,
   CameraScannerViewProps,
   PhotoScanResult,
   ScannerPermissionResult,
@@ -153,6 +155,91 @@ export class ExpoScannerService implements ScannerService {
       };
     }
   }
+
+  async scanMultipleFromPhotoLibrary(): Promise<BulkPhotoScanResult> {
+    try {
+      const pickerResult = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: false,
+        allowsMultipleSelection: true,
+        mediaTypes: "images",
+        orderedSelection: true,
+        quality: 1,
+        selectionLimit: 50
+      });
+
+      if (pickerResult.canceled || pickerResult.assets.length === 0) {
+        return { status: "canceled" };
+      }
+
+      const items = await mapWithConcurrency(pickerResult.assets, 3, async (asset, sourceIndex) => {
+        const sourceName = asset.fileName ?? `Screenshot ${sourceIndex + 1}`;
+
+        try {
+          const scanResults =
+            Platform.OS === "ios" && this.imageBarcodeDecoder?.isAvailable()
+              ? await this.imageBarcodeDecoder.decodeImage(asset.uri, supportedExpoBarcodeTypes)
+              : (await Camera.scanFromURLAsync(asset.uri, supportedExpoBarcodeTypes)).map(mapBarcodeResult);
+          const result = selectBestImageBarcodeResult(scanResults);
+
+          if (!result) {
+            return {
+              error: {
+                kind: "validation",
+                field: "cardNumber",
+                message: "No readable barcode was found. Reselect the image or enter the card manually."
+              },
+              sourceIndex,
+              sourceName,
+              status: "failed"
+            } satisfies BulkPhotoScanItem;
+          }
+
+          return { result, sourceIndex, sourceName, status: "scanned" } satisfies BulkPhotoScanItem;
+        } catch (error) {
+          return {
+            error: toUnknownScannerError(error, "The selected image could not be scanned."),
+            sourceIndex,
+            sourceName,
+            status: "failed"
+          } satisfies BulkPhotoScanItem;
+        }
+      });
+
+      return { items, status: "scanned" };
+    } catch (error) {
+      return {
+        items: [
+          {
+            error: toUnknownScannerError(error, "The selected images could not be scanned."),
+            sourceIndex: 0,
+            sourceName: "Photo selection",
+            status: "failed"
+          }
+        ],
+        status: "scanned"
+      };
+    }
+  }
+}
+
+async function mapWithConcurrency<T, R>(
+  values: readonly T[],
+  concurrency: number,
+  mapper: (value: T, index: number) => Promise<R>
+): Promise<R[]> {
+  const results = new Array<R>(values.length);
+  let nextIndex = 0;
+
+  async function worker() {
+    while (nextIndex < values.length) {
+      const index = nextIndex;
+      nextIndex += 1;
+      results[index] = await mapper(values[index], index);
+    }
+  }
+
+  await Promise.all(Array.from({ length: Math.min(concurrency, values.length) }, () => worker()));
+  return results;
 }
 
 const styles = StyleSheet.create({

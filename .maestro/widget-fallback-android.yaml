@@ -1,0 +1,11 @@
+appId: com.anonymous.loyaltycardwallet
+name: Android widget fallback deep link opens Cards
+tags:
+  - android
+  - phase3
+---
+- launchApp:
+    clearState: true
+- openLink: "loyaltycardwallet://"
+- assertVisible: "Cards"
+- assertVisible: "Add card"

@@ -10,14 +10,17 @@ import { pickedImageToDataUri } from "@/features/images/image-data-uri";
 import { showImageSourceSheet } from "@/features/images/imageSourceSheet";
 
 type AddManualScreenProps = {
+  initialBackgroundColor?: string;
+  initialStoreName?: string;
   onSaved: (cardId: string) => void;
 };
 
-export function AddManualScreen({ onSaved }: AddManualScreenProps) {
+export function AddManualScreen({ initialBackgroundColor, initialStoreName = "", onSaved }: AddManualScreenProps) {
   const [values, setValues] = useState<AddCardFormValues>({
+    backgroundColor: initialBackgroundColor,
     barcodeFormat: "code128",
     cardNumber: "",
-    storeName: ""
+    storeName: initialStoreName
   });
   const [primaryImage, setPrimaryImage] = useState<PickedImage | null>(null);
   const imagePicker = useCardImagePicker();

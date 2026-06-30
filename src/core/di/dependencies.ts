@@ -1,10 +1,14 @@
 import type { BarcodeRenderer } from "@/domain/barcode/BarcodeRenderer";
 import type { AppInfoProvider } from "@/domain/account/AppInfo";
 import type { CardRepository } from "@/domain/cards/CardRepository";
+import type { CardQueryRepository } from "@/domain/cards/CardQueryRepository";
+import type { MerchantCatalogRepository } from "@/domain/catalog/MerchantCatalog";
+import type { ImportSessionRepository } from "@/domain/importing/ImportSession";
 import type { ImageSelectionService } from "@/domain/images/ImageSelection";
 import type { ImageStore } from "@/domain/images/ImageStore";
 import type { LocationProvider } from "@/domain/stores/LocationProvider";
 import type { StoreRepository } from "@/domain/stores/StoreRepository";
+import type { MerchantLinkRepository } from "@/domain/stores/MerchantLinks";
 import type { SharingService } from "@/domain/sharing/SharingPorts";
 import type { TextShareService } from "@/domain/sharing/TextShareService";
 import type { AppError, ErrorReporter } from "@/core/errors/AppError";
@@ -12,17 +16,30 @@ import type { InteractionFeedback } from "@/core/interaction/InteractionFeedback
 import type { HttpClient } from "@/core/network/HttpClient";
 import type { NetworkManager } from "@/core/network/NetworkManager";
 import type { ScannerService } from "@/core/scanner/ScannerService";
+import type { BackupService } from "@/domain/backup/Backup";
+import type { LocalDiagnosticsService } from "@/domain/diagnostics/Diagnostics";
+import type { LocalAuthService, LocalSecuritySettingsStore } from "@/domain/security/LocalSecurity";
+import type { ExternalSnapshotRepository } from "@/domain/external-surfaces/ExternalSnapshotPorts";
 
 export type AppDependencies = {
   appInfoProvider: AppInfoProvider;
   barcodeRenderer: BarcodeRenderer;
+  backupService: BackupService;
   cardRepository: CardRepository;
+  cardQueryRepository: CardQueryRepository;
   errorReporter: ErrorReporter;
+  externalSnapshotRepository: ExternalSnapshotRepository;
   httpClient: HttpClient;
   imageSelectionService: ImageSelectionService;
   imageStore: ImageStore;
+  importSessionRepository: ImportSessionRepository;
   interactionFeedback: InteractionFeedback;
   locationProvider: LocationProvider;
+  localAuthService: LocalAuthService;
+  localDiagnosticsService: LocalDiagnosticsService;
+  localSecuritySettingsStore: LocalSecuritySettingsStore;
+  merchantCatalogRepository: MerchantCatalogRepository;
+  merchantLinkRepository: MerchantLinkRepository;
   networkManager: NetworkManager;
   scannerService: ScannerService;
   sharingService: SharingService;

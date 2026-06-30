@@ -23,9 +23,22 @@ export type PhotoScanResult =
   | { status: "scanned"; result: RawScanResult }
   | { status: "failed"; error: AppError };
 
+export type BulkPhotoScanItem = {
+  error?: AppError;
+  result?: RawScanResult;
+  sourceIndex: number;
+  sourceName: string;
+  status: "scanned" | "failed";
+};
+
+export type BulkPhotoScanResult =
+  | { status: "canceled" }
+  | { items: BulkPhotoScanItem[]; status: "scanned" };
+
 export type ScannerService = {
   CameraScannerView: ComponentType<CameraScannerViewProps>;
   requestCameraPermission(): Promise<ScannerPermissionResult>;
   requestPhotoPermission(): Promise<ScannerPermissionResult>;
   scanFromPhotoLibrary(): Promise<PhotoScanResult>;
+  scanMultipleFromPhotoLibrary(): Promise<BulkPhotoScanResult>;
 };
